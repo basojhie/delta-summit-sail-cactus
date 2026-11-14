@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Atrium",
+      "hasCanvas": true,
+      "bodyTextLen": 1002,
+      "bodyTextHash": "95bdf75358ec406f219290b579448db1a6395c439825120c4a9b78e2eb4ea761",
+      "bodyTextPrefix": "Teluk GitHub Lab Termux Lab Groq Ruang Edge Ruang Rapat Lobi Rak",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Atrium",
+      "hasCanvas": true,
+      "bodyTextLen": 908,
+      "bodyTextHash": "e3c1e70c649e291cd0487ec72ce7985a15d95a7b4d76ff6c61574d8a10f753ee",
+      "bodyTextPrefix": "Teluk GitHub Lab Termux Lab Groq Ruang Edge Ruang Rapat Lobi Rak",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

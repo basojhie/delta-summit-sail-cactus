@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Atrium">
+  <rect width="32" height="32" rx="7" fill="#1C1916"/>
+  <path fill="#F6F1E8" d="M5 14.4 16 5l11 9.4V27H5V14.4z"/>
+  <path fill="#1C1916" d="M12.4 27v-8.2a3.6 3.6 0 0 1 7.2 0V27h-7.2z"/>
+  <rect x="14.3" y="20.2" width="3.4" height="6.8" fill="#C17A3A"/>
+  <rect x="7.2" y="16.6" width="3.4" height="3.4" fill="#3D6B4F"/>
+  <rect x="21.4" y="16.6" width="3.4" height="3.4" fill="#C4A574"/>
+</svg>
