@@ -28,7 +28,7 @@ function Home() {
 function Boot() {
   return (
     <div className="boot">
-      <p>Lantai agen</p>
+      <p>Tim kreatif</p>
       <h1>Atrium</h1>
     </div>
   );

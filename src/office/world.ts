@@ -14,10 +14,10 @@ export type MatKey =
   | "screen"
   | "glass"
   | "lamp"
-  | "rugGit"
-  | "rugTerm"
-  | "rugGroq"
-  | "rugCf"
+  | "rugStrat"
+  | "rugScript"
+  | "rugVisual"
+  | "rugVideo"
   | "rugMeet"
   | "rugLobby"
   | "runner";
@@ -41,10 +41,10 @@ export const PAL = {
   glass: "#e4eee8",
   plaster: "#f3eee6",
   partition: "#e5dcd0",
-  rugGit: "#b08960",
-  rugTerm: "#d5ddd4",
-  rugGroq: "#ead7c2",
-  rugCf: "#e3dbd0",
+  rugStrat: "#b08960",
+  rugScript: "#d5ddd4",
+  rugVisual: "#ead7c2",
+  rugVideo: "#e3dbd0",
   rugMeet: "#d9c4a4",
   rugLobby: "#efe4d2",
   runner: "#e7d3b4",
@@ -67,51 +67,51 @@ export const PROFILES: Record<AgentId, Profile> = {
     id: "raka",
     name: "Raka Santoso",
     short: "Raka",
-    team: "GitHub",
-    role: "Engineer repositori",
-    room: "Teluk GitHub",
-    home: "gitSeat",
-    focus: ["Review pull request", "Jaga CI tetap hijau", "Pecah kerja jadi commit"],
+    team: "Strategi",
+    role: "Strategi & Riset Konten",
+    room: "Ruang Strategi",
+    home: "stratSeat",
+    focus: ["Riset tren dan audiens", "Angle dan kalender konten", "Baca analitik performa"],
   },
   sari: {
     id: "sari",
     name: "Sari Wulandari",
     short: "Sari",
-    team: "Termux",
-    role: "Operator terminal",
-    room: "Lab Termux",
-    home: "termSeat",
-    focus: ["Sesi Termux & tmux", "Skrip dan ssh", "Tes dari shell"],
+    team: "Naskah",
+    role: "Copywriter & Scriptwriter",
+    room: "Studio Naskah",
+    home: "scriptSeat",
+    focus: ["Hook, caption, dan headline", "Naskah video dan thread", "Jaga brand voice konsisten"],
   },
   dimas: {
     id: "dimas",
     name: "Dimas Pratama",
     short: "Dimas",
-    team: "Groq",
-    role: "Spesialis inferensi",
-    room: "Lab Groq",
-    home: "groqSeat",
-    focus: ["Model cepat", "Latensi dan token", "Reasoning effort"],
+    team: "Visual",
+    role: "Visual Designer",
+    room: "Studio Visual",
+    home: "visualSeat",
+    focus: ["Carousel, poster, thumbnail", "Palet dan tipografi brand", "Brief visual dan prompt gambar"],
   },
   nia: {
     id: "nia",
     name: "Nia Kusuma",
     short: "Nia",
-    team: "Cloudflare",
-    role: "Engineer edge",
-    room: "Ruang Edge",
-    home: "cfSeat",
-    focus: ["Workers & Wrangler", "DNS, SSL, cache", "Deploy ke edge"],
+    team: "Video",
+    role: "Video & Motion Producer",
+    room: "Studio Video",
+    home: "videoSeat",
+    focus: ["Storyboard Reels, TikTok, Shorts", "Subtitle dan ritme potong", "Arahan voiceover dan musik"],
   },
   hermes: {
     id: "hermes",
     name: "Hermes",
     short: "Hermes",
-    team: "Hermes",
-    role: "Koordinator lantai",
+    team: "Direktur",
+    role: "Creative Director",
     room: "Lobi",
     home: "lobbyDesk",
-    focus: ["Bagi brief ke tim", "Pimpin standup", "Jaga konteks tetap rapi"],
+    focus: ["Bagi brief ke tim", "Pimpin standup dan review", "Jaga kualitas dan brand voice"],
   },
 };
 
@@ -120,10 +120,10 @@ export const AGENT_IDS: AgentId[] = ["raka", "sari", "dimas", "nia", "hermes"];
 export type NodeDef = { x: number; z: number; yaw?: number; seat?: boolean };
 
 export const NODES: Record<string, NodeDef> = {
-  gitSeat: { x: -8.32, z: 6.35, yaw: Math.PI, seat: true },
-  termSeat: { x: 8.32, z: 6.35, yaw: Math.PI, seat: true },
-  groqSeat: { x: -8.32, z: -6.35, yaw: 0, seat: true },
-  cfSeat: { x: 8.32, z: -6.35, yaw: 0, seat: true },
+  stratSeat: { x: -8.32, z: 6.35, yaw: Math.PI, seat: true },
+  scriptSeat: { x: 8.32, z: 6.35, yaw: Math.PI, seat: true },
+  visualSeat: { x: -8.32, z: -6.35, yaw: 0, seat: true },
+  videoSeat: { x: 8.32, z: -6.35, yaw: 0, seat: true },
   meetHead: { x: 0, z: -7.15, yaw: Math.PI, seat: true },
   meetBypass: { x: 2.55, z: -7.05 },
   meetWest: { x: -1.9, z: -5.55, yaw: -Math.PI / 2, seat: true },
@@ -132,10 +132,10 @@ export const NODES: Record<string, NodeDef> = {
   meetSW: { x: -1.2, z: -4.2, yaw: 0.35, seat: true },
   lounge: { x: 0.85, z: 4.85, yaw: Math.PI },
   lobbyDesk: { x: -2.15, z: 6.45, yaw: Math.PI / 2, seat: true },
-  gitDoor: { x: -8.32, z: 2.25 },
-  termDoor: { x: 8.32, z: 2.25 },
-  groqDoor: { x: -8.32, z: -2.25 },
-  cfDoor: { x: 8.32, z: -2.25 },
+  stratDoor: { x: -8.32, z: 2.25 },
+  scriptDoor: { x: 8.32, z: 2.25 },
+  visualDoor: { x: -8.32, z: -2.25 },
+  videoDoor: { x: 8.32, z: -2.25 },
   meetDoor: { x: 0, z: -2.25 },
   lobbyEntry: { x: 0, z: 2.25 },
   hallW: { x: -8.32, z: 0 },
@@ -144,16 +144,16 @@ export const NODES: Record<string, NodeDef> = {
 };
 
 const EDGES: [string, string][] = [
-  ["gitSeat", "gitDoor"],
-  ["gitDoor", "hallW"],
+  ["stratSeat", "stratDoor"],
+  ["stratDoor", "hallW"],
   ["hallW", "hallC"],
   ["hallC", "hallE"],
-  ["hallE", "termDoor"],
-  ["termDoor", "termSeat"],
-  ["hallW", "groqDoor"],
-  ["groqDoor", "groqSeat"],
-  ["hallE", "cfDoor"],
-  ["cfDoor", "cfSeat"],
+  ["hallE", "scriptDoor"],
+  ["scriptDoor", "scriptSeat"],
+  ["hallW", "visualDoor"],
+  ["visualDoor", "visualSeat"],
+  ["hallE", "videoDoor"],
+  ["videoDoor", "videoSeat"],
   ["hallC", "meetDoor"],
   ["meetDoor", "meetBypass"],
   ["meetBypass", "meetHead"],
@@ -198,10 +198,10 @@ export function route(from: string, to: string): string[] | null {
 }
 
 export const PLACE: Record<string, string> = {
-  gitSeat: "meja GitHub",
-  termSeat: "meja Termux",
-  groqSeat: "meja Groq",
-  cfSeat: "meja Edge",
+  stratSeat: "meja Strategi",
+  scriptSeat: "meja Naskah",
+  visualSeat: "meja Visual",
+  videoSeat: "meja Video",
   meetHead: "ujung meja rapat",
   meetWest: "meja rapat",
   meetEast: "meja rapat",
@@ -209,10 +209,10 @@ export const PLACE: Record<string, string> = {
   meetSW: "meja rapat",
   lounge: "sofa lobi",
   lobbyDesk: "meja Hermes",
-  gitDoor: "pintu GitHub",
-  termDoor: "pintu Termux",
-  groqDoor: "pintu Groq",
-  cfDoor: "pintu Edge",
+  stratDoor: "pintu Strategi",
+  scriptDoor: "pintu Naskah",
+  visualDoor: "pintu Visual",
+  videoDoor: "pintu Video",
   meetDoor: "ruang rapat",
   lobbyEntry: "lobi",
   hallW: "koridor barat",
@@ -231,69 +231,69 @@ export type Room = {
 };
 
 export const ROOMS: Room[] = [
-  { id: "github", name: "Teluk GitHub", agent: "raka", minX: -12.35, maxX: -4.25, minZ: 1.7, maxZ: 8.35 },
-  { id: "termux", name: "Lab Termux", agent: "sari", minX: 4.25, maxX: 12.35, minZ: 1.7, maxZ: 8.35 },
-  { id: "groq", name: "Lab Groq", agent: "dimas", minX: -12.35, maxX: -4.25, minZ: -8.35, maxZ: -1.7 },
-  { id: "cf", name: "Ruang Edge", agent: "nia", minX: 4.25, maxX: 12.35, minZ: -8.35, maxZ: -1.7 },
+  { id: "strategy", name: "Ruang Strategi", agent: "raka", minX: -12.35, maxX: -4.25, minZ: 1.7, maxZ: 8.35 },
+  { id: "script", name: "Studio Naskah", agent: "sari", minX: 4.25, maxX: 12.35, minZ: 1.7, maxZ: 8.35 },
+  { id: "visual", name: "Studio Visual", agent: "dimas", minX: -12.35, maxX: -4.25, minZ: -8.35, maxZ: -1.7 },
+  { id: "video", name: "Studio Video", agent: "nia", minX: 4.25, maxX: 12.35, minZ: -8.35, maxZ: -1.7 },
   { id: "meet", name: "Ruang Rapat", agent: null, minX: -4.25, maxX: 4.25, minZ: -8.35, maxZ: -1.7 },
   { id: "lobby", name: "Lobi", agent: "hermes", minX: -4.25, maxX: 4.25, minZ: 1.7, maxZ: 8.35 },
 ];
 
 export const WORK_LINES: Record<AgentId, string[]> = {
   raka: [
-    "Review PR #184 — ada race di webhook.",
-    "CI hijau. Siap di-squash lalu merge.",
-    "Conflict di routes. Aku yang beresin.",
-    "Issue labelnya salah. Aku pindahkan.",
+    "Tren minggu ini naik di Reels, bukan di feed.",
+    "Audiensnya paling aktif jam 19.00 sampai 21.00.",
+    "Kompetitor banyak pakai format tips cepat. Kita beda di angle.",
+    "Kalender konten bulan depan sudah aku isi setengah.",
   ],
   sari: [
-    "pkg update di sesi Termux selesai.",
-    "Job ini aku taruh di tmux, biar tidak putus.",
-    "ssh ke VPS. Log nginx bersih.",
-    "proot Debian siap kalau butuh toolchain.",
+    "Hook ketiga paling kuat. Dua lainnya aku simpan.",
+    "Caption terlalu panjang. Aku pangkas jadi tiga baris.",
+    "Naskah 30 detik. Kalimat pembukanya harus nancap.",
+    "Nada tulisannya aku samakan dengan brand voice.",
   ],
   dimas: [
-    "gpt-oss di Groq, latensi masih di bawah 300ms.",
-    "Antrian inferensi kosong. Kirim saja.",
-    "Reasoning effort tinggi untuk brief yang panjang.",
-    "Jendela konteks aman. Bukan model 4K.",
+    "Palet warna aku kunci dulu, baru layout.",
+    "Slide pertama carousel harus bisa dibaca sekali lirik.",
+    "Thumbnail ini kontrasnya kurang. Aku naikkan.",
+    "Tipografi dua font saja, biar rapi.",
   ],
   nia: [
-    "Worker login sudah di edge region SIN.",
-    "Cache HIT 94%. Origin jarang kepanggil.",
-    "DNS proxied, SSL full strict.",
-    "Wrangler deploy tadi hijau.",
+    "Tiga detik pertama video menentukan. Aku pangkas intro.",
+    "Subtitle aku taruh di area aman layar.",
+    "Ritme potong dipercepat di bagian tengah.",
+    "Musik latar harus lebih pelan dari suara narasi.",
   ],
   hermes: [
-    "Lantai tenang. Kirim brief kalau ada tugas.",
-    "Satu pekerjaan, satu pemilik. Jangan dobel.",
-    "Konteks sesi aku rapikan tiap standup.",
+    "Lantai tenang. Kirim brief kalau ada konten yang mau dibuat.",
+    "Satu konten, satu pemilik. Jangan dobel.",
+    "Brand voice aku rapikan tiap standup.",
     "Yang nganggur, mampir. Jangan nunggu di chat.",
   ],
 };
 
 export const LOUNGE_LINES: Record<AgentId, string> = {
-  raka: "Sebentar di lobi. Mata butuh istirahat dari diff.",
-  sari: "Isi ulang dulu. Sesi Termux tetap hidup di tmux.",
-  dimas: "Modelnya aku biarkan hangat. Aku ambil air.",
-  nia: "Deploy tidak going. Aku boleh duduk semenit.",
+  raka: "Sebentar di lobi. Mata butuh istirahat dari grafik.",
+  sari: "Isi ulang dulu. Kalimat bagus datang pas lagi santai.",
+  dimas: "Layar aku tinggal sebentar. Mata perlu warna lain.",
+  nia: "Render lagi jalan. Aku boleh duduk semenit.",
   hermes: "Lobi itu meja kerja juga. Orang lewat, aku tangkap.",
 };
 
 export const VISIT_LINES: Record<AgentId, string> = {
-  raka: "Mampir. Ada diff yang mau kamu lihat bareng?",
-  sari: "Aku bawa satu perintah shell. Mau aku jalankan?",
-  dimas: "Ini bisa dipendekkan model. Mau aku coba?",
-  nia: "Kalau sudah beres, aku yang dorong ke edge.",
+  raka: "Mampir. Ada data audiens yang mau kamu lihat bareng?",
+  sari: "Aku bawa satu draf hook. Menurutmu kuat?",
+  dimas: "Ini visualnya sudah jadi. Mau kasih masukan?",
+  nia: "Storyboard-nya aku bawa. Cek alurnya sebentar?",
   hermes: "Cuma cek. Kamu macet atau lagi fokus?",
 };
 
 export const MEET_LINES: Record<AgentId, string> = {
-  raka: "GitHub: dua PR terbuka, satu masih nunggu review.",
-  sari: "Termux: sesi bersih, tidak ada job gagal.",
-  dimas: "Groq: p99 inferensi masih di bawah 300ms.",
-  nia: "Edge: deploy terakhir hijau, cache hangat.",
-  hermes: "Catat. Tidak ada blocker yang dipakai bersama.",
+  raka: "Strategi: tiga topik naik, angle minggu ini sudah dipilih.",
+  sari: "Naskah: dua caption selesai, satu naskah nunggu hook.",
+  dimas: "Visual: carousel kedua masuk revisi warna.",
+  nia: "Video: storyboard Reels siap, tinggal subtitle.",
+  hermes: "Catat. Yang telat, kabari aku sebelum makan siang.",
 };
 
 export type Visual = {
@@ -446,10 +446,10 @@ function build() {
   add("brass", 7.5, 1.62, 0.08, 1.2, 0.2, 0, false);
   add("brass", 9.15, 1.62, 0.08, 1.2, 0.2, 0, false);
 
-  add("rugGit", -8.3, 5.15, 7.5, 0.025, 6.1, 0.005, false);
-  add("rugTerm", 8.3, 5.15, 7.5, 0.025, 6.1, 0.005, false);
-  add("rugGroq", -8.3, -5.15, 7.5, 0.025, 6.1, 0.005, false);
-  add("rugCf", 8.3, -5.15, 7.5, 0.025, 6.1, 0.005, false);
+  add("rugStrat", -8.3, 5.15, 7.5, 0.025, 6.1, 0.005, false);
+  add("rugScript", 8.3, 5.15, 7.5, 0.025, 6.1, 0.005, false);
+  add("rugVisual", -8.3, -5.15, 7.5, 0.025, 6.1, 0.005, false);
+  add("rugVideo", 8.3, -5.15, 7.5, 0.025, 6.1, 0.005, false);
   add("rugMeet", 0, -5.15, 7.7, 0.025, 6.1, 0.005, false);
   add("rugLobby", 0, 5.2, 7.7, 0.025, 6.0, 0.005, false);
   add("runner", 0, 0, 16.2, 0.02, 2.15, 0.008, false);
