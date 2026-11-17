@@ -11,6 +11,7 @@ import {
   route,
   type AgentId,
 } from "./world";
+import { clip, deliverLine, handoffLine, planBrief, taskLine } from "./brief";
 
 export type CameraMode = "orbit" | "walk";
 export type Intent = "work" | "lounge" | "meet" | "visit";
@@ -36,14 +37,16 @@ export type Agent = {
   phase: number;
 };
 
+export type Pipeline = { groups: AgentId[][]; i: number; t: number; brief: string };
+
 export type LogItem = { id: number; who: string; text: string; clock: string };
 
 const MEET_SEATS = ["meetWest", "meetEast", "meetSouth", "meetSW"] as const;
 const DOORS: Record<AgentId, string> = {
-  raka: "gitDoor",
-  sari: "termDoor",
-  dimas: "groqDoor",
-  nia: "cfDoor",
+  raka: "stratDoor",
+  sari: "scriptDoor",
+  dimas: "visualDoor",
+  nia: "videoDoor",
   hermes: "lobbyEntry",
 };
 
@@ -91,6 +94,7 @@ export const sim = {
   selected: null as AgentId | null,
   hold: 0,
   untilStandup: 22,
+  pipe: null as Pipeline | null,
   clockMin: 9 * 60 + 12,
   t: 0,
   log: [] as LogItem[],
@@ -217,52 +221,60 @@ function beginStandup() {
   go(h, "meetHead", "meet");
 }
 
-function clip(text: string, n = 78) {
-  const t = text.trim();
-  return t.length > n ? `${t.slice(0, n - 1)}…` : t;
-}
-
-function assignees(text: string): AgentId[] {
-  const t = text.toLowerCase();
-  if (/standup|rapat|semua orang|tiap ruang|seluruh|satu status/.test(t)) {
-    return ["raka", "sari", "dimas", "nia"];
-  }
-  const ids: AgentId[] = [];
-  if (/git|github|pull|commit|merge|repo|\bpr\b|review|\bci\b|kode/.test(t)) ids.push("raka");
-  if (/termux|terminal|shell|ssh|tmux|\bpkg\b|linux|skrip|script|\btes\b|bash/.test(t)) ids.push("sari");
-  if (/groq|model|infer|token|\bllm\b|latensi|reasoning|ringkas/.test(t)) ids.push("dimas");
-  if (/cloudflare|worker|edge|\bdns\b|\bcdn\b|deploy|wrangler|cache|\bssl\b/.test(t)) ids.push("nia");
-  return ids.length ? ids : ["raka", "sari", "dimas", "nia"];
-}
-
-function taskLine(id: AgentId, text: string) {
-  const bit = clip(text, 72);
-  if (id === "raka") return `GitHub: aku pecah jadi PR — ${bit}`;
-  if (id === "sari") return `Termux: aku jalankan dari shell — ${bit}`;
-  if (id === "dimas") return `Groq: aku lempar ke model cepat — ${bit}`;
-  if (id === "nia") return `Edge: aku siapkan Worker — ${bit}`;
-  return bit;
-}
+const STAGE_GAP = 11;
+const STAGE_START = 16;
 
 export function assignBrief(text: string) {
   const clean = clip(text, 180);
-  const ids = assignees(clean);
+  const plan = planBrief(clean);
   sim.hold = 20;
   sim.untilStandup = Math.max(sim.untilStandup, 36);
   pushLog("Kamu", clean);
-  const names = ids.map((id) => PROFILES[id].short).join(", ");
-  pushLog("Hermes", `Brief dibagi ke ${names}.`);
+  const names = plan.assignees.map((id) => PROFILES[id].short).join(", ");
+  pushLog("Hermes", plan.standup ? "Standup dipanggil. Semua ke ruang rapat." : `Brief dibagi ke ${names}.`);
   const h = person("hermes");
-  h.lineOverride = "Yang kupanggil, ke meja rapat. Yang lain lanjut.";
+  h.lineOverride = plan.standup ? "Standup. Satu kabar, tanpa cerita panjang." : "Yang kupanggil, ke meja rapat. Yang lain lanjut.";
   say(h, `Brief masuk: ${clip(clean, 64)}`, false);
   go(h, "meetHead", "meet");
-  ids.forEach((id, i) => {
+  plan.assignees.forEach((id, i) => {
     const a = person(id);
-    const line = taskLine(id, clean);
+    const line = plan.standup ? MEET_LINES[id] : taskLine(id, clean);
     a.lineOverride = line;
     say(a, line, false);
     go(a, MEET_SEATS[i]!, "meet");
   });
+  if (plan.standup) {
+    sim.pipe = null;
+    return;
+  }
+  sim.pipe = { groups: plan.groups, i: 0, t: STAGE_START, brief: clean };
+  sim.hold = Math.max(sim.hold, STAGE_START + STAGE_GAP);
+}
+
+function stepPipe(dt: number) {
+  const p = sim.pipe;
+  if (!p) return;
+  p.t -= dt;
+  if (p.t > 0) return;
+  const group = p.groups[p.i];
+  if (!group) {
+    sim.pipe = null;
+    return;
+  }
+  const next = p.groups[p.i + 1];
+  for (const id of group) {
+    const a = person(id);
+    say(a, deliverLine(id, p.brief), true);
+    if (next) {
+      const target = next[0]!;
+      a.lineOverride = handoffLine(id, PROFILES[target].short);
+      go(a, DOORS[target], "visit");
+    }
+  }
+  p.i += 1;
+  p.t = STAGE_GAP;
+  sim.hold = Math.max(sim.hold, STAGE_GAP + 4);
+  if (!next) sim.pipe = null;
 }
 
 function stepAgent(a: Agent, dt: number) {
@@ -315,6 +327,7 @@ export function stepOffice(dt: number) {
     beginStandup();
     sim.untilStandup = 52 + Math.random() * 12;
   }
+  stepPipe(dt);
   for (const id of AGENT_IDS) stepAgent(sim.agents[id], dt);
 }
 
@@ -382,4 +395,4 @@ declare global {
   }
 }
 
-pushLog("Hermes", "Kantor dibuka. Lima orang sudah di mejanya.");
+pushLog("Hermes", "Studio dibuka. Lima orang sudah di mejanya.");

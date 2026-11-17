@@ -61,9 +61,9 @@ export function submitBrief(text: string) {
   if (!clean) return;
   assignBrief(clean);
   try {
-    const prev = JSON.parse(localStorage.getItem("atrium-briefs") || "[]") as string[];
+    const prev = JSON.parse(localStorage.getItem("atrium-briefs-v2") || "[]") as string[];
     const next = [clean, ...prev.filter((item) => item !== clean)].slice(0, 6);
-    localStorage.setItem("atrium-briefs", JSON.stringify(next));
+    localStorage.setItem("atrium-briefs-v2", JSON.stringify(next));
   } catch {
     /* ignore quota / private mode */
   }

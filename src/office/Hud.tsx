@@ -6,10 +6,10 @@ import { AGENT_IDS, PROFILES, ROOMS, type AgentId } from "./world";
 import { labelNodes } from "./labels";
 
 const SAMPLES = [
-  "Review PR autentikasi, lalu deploy Worker ke edge",
-  "Ukur latensi model Groq untuk ringkasan log",
-  "Jalankan suite tes di sesi Termux",
-  "Standup: satu status dari tiap ruangan",
+  "Kampanye 7 hari untuk peluncuran kopi susu baru",
+  "Naskah Reels 30 detik tentang tips hemat bulanan",
+  "Carousel 8 slide: 5 kesalahan pemula investasi",
+  "Standup: status konten minggu ini",
 ];
 
 const STATE_LABEL = { work: "Di meja", walk: "Berjalan", talk: "Ngobrol" } as const;
@@ -60,7 +60,7 @@ export function Hud() {
 
   useEffect(() => {
     try {
-      const prev = JSON.parse(localStorage.getItem("atrium-briefs") || "[]") as string[];
+      const prev = JSON.parse(localStorage.getItem("atrium-briefs-v2") || "[]") as string[];
       if (Array.isArray(prev)) setSaved(prev.slice(0, 4));
     } catch {
       /* ignore */
@@ -73,7 +73,7 @@ export function Hud() {
     <div className="hud">
       <header className="topbar">
         <div className="brand">
-          <p className="brand-kicker">Lantai agen</p>
+          <p className="brand-kicker">Tim kreatif</p>
           <h1>Atrium</h1>
         </div>
         <p className="ticker">{latest ? `${latest.clock}  ${latest.who} — ${latest.text}` : "Lantai baru bangun"}</p>
@@ -105,11 +105,12 @@ export function Hud() {
       <div className="mid">
         {intro ? (
           <section className="intro hit">
-            <p className="brand-kicker">Kantor yang bisa dilihat</p>
+            <p className="brand-kicker">Studio yang bisa dilihat</p>
             <h2>Lima orang, enam ruangan.</h2>
             <p>
-              GitHub, Termux, Groq, Cloudflare, dan Hermes jalan sendiri, kerja di meja, lalu ngobrol lewat gelembung.
-              Kamu bisa keliling atau kirim brief — Hermes yang membagi.
+              Strategi, Naskah, Visual, Video, dan Direktur Kreatif bekerja di studionya masing-masing, lalu
+              menyerahkan hasil satu ke satu lewat gelembung. Kamu bisa keliling atau kirim brief — Hermes yang
+              membagi dan menjaga alurnya.
             </p>
             <div className="intro-actions">
               <button type="button" className="text-btn" onClick={dismissIntro}>
@@ -193,7 +194,7 @@ export function Hud() {
             id="brief"
             value={brief}
             onChange={(event) => setBrief(event.target.value)}
-            placeholder="Tulis tugas, misalnya deploy login ke edge"
+            placeholder="Tulis brief konten, misalnya carousel 8 slide tips hemat"
             maxLength={180}
           />
           <button type="submit" className="icon-btn is-on" aria-label="Kirim brief">
@@ -254,7 +255,7 @@ function Dossier({ id }: { id: AgentId }) {
         ))}
       </ul>
       <p className="note">
-        Percakapan ini disutradarai di Atrium, bukan panggilan live ke akun GitHub, Groq, Cloudflare, atau sesi Termux di perangkatmu.
+        Percakapan dan hasil kerja ini masih skenario di Atrium, belum dibuat oleh AI sungguhan.
       </p>
     </aside>
   );
@@ -280,7 +281,7 @@ function MiniMap() {
             rx={4}
           />
           <text x={(X(room.minX) + X(room.maxX)) / 2} y={(Y(room.minZ) + Y(room.maxZ)) / 2} textAnchor="middle">
-            {room.name.replace("Teluk ", "").replace("Lab ", "").replace("Ruang ", "")}
+            {room.name.replace("Studio ", "").replace("Ruang ", "")}
           </text>
         </g>
       ))}
