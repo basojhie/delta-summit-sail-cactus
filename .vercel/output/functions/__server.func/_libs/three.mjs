@@ -1,4 +1,4 @@
-import { c as BufferAttribute, l as BufferGeometry } from "./@react-three/drei+[...].mjs";
+import { o as BufferAttribute, s as BufferGeometry } from "./@react-three/fiber+[...].mjs";
 //#region node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
 /**
 * Merges a set of geometries into a single instance. All geometries must have compatible attributes.

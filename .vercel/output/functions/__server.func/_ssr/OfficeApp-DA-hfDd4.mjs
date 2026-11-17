@@ -1,9 +1,9 @@
 import { i as __toESM } from "../_runtime.mjs";
-import { a as useThree, d as SRGBColorSpace, f as Vector3, h as require_react, i as useFrame, m as require_jsx_runtime, r as Canvas, s as BoxGeometry, t as Html, u as CanvasTexture } from "../_libs/@react-three/drei+[...].mjs";
+import { a as BoxGeometry, c as CanvasTexture, f as require_jsx_runtime, l as SRGBColorSpace, n as useFrame, p as require_react, r as useThree, t as Canvas, u as Vector3 } from "../_libs/@react-three/fiber+[...].mjs";
 import { a as Pause, c as Clock3, i as Play, o as Gauge, r as Send, s as Footprints, t as X } from "../_libs/lucide-react.mjs";
 import { t as create } from "../_libs/zustand.mjs";
 import { t as mergeGeometries } from "../_libs/three.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/OfficeApp-DjNMsE4O.js
+//#region node_modules/.nitro/vite/services/ssr/assets/OfficeApp-DA-hfDd4.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var PAL = {
@@ -25,10 +25,10 @@ var PAL = {
 	glass: "#e4eee8",
 	plaster: "#f3eee6",
 	partition: "#e5dcd0",
-	rugGit: "#b08960",
-	rugTerm: "#d5ddd4",
-	rugGroq: "#ead7c2",
-	rugCf: "#e3dbd0",
+	rugStrat: "#b08960",
+	rugScript: "#d5ddd4",
+	rugVisual: "#ead7c2",
+	rugVideo: "#e3dbd0",
 	rugMeet: "#d9c4a4",
 	rugLobby: "#efe4d2",
 	runner: "#e7d3b4",
@@ -39,70 +39,70 @@ var PROFILES = {
 		id: "raka",
 		name: "Raka Santoso",
 		short: "Raka",
-		team: "GitHub",
-		role: "Engineer repositori",
-		room: "Teluk GitHub",
-		home: "gitSeat",
+		team: "Strategi",
+		role: "Strategi & Riset Konten",
+		room: "Ruang Strategi",
+		home: "stratSeat",
 		focus: [
-			"Review pull request",
-			"Jaga CI tetap hijau",
-			"Pecah kerja jadi commit"
+			"Riset tren dan audiens",
+			"Angle dan kalender konten",
+			"Baca analitik performa"
 		]
 	},
 	sari: {
 		id: "sari",
 		name: "Sari Wulandari",
 		short: "Sari",
-		team: "Termux",
-		role: "Operator terminal",
-		room: "Lab Termux",
-		home: "termSeat",
+		team: "Naskah",
+		role: "Copywriter & Scriptwriter",
+		room: "Studio Naskah",
+		home: "scriptSeat",
 		focus: [
-			"Sesi Termux & tmux",
-			"Skrip dan ssh",
-			"Tes dari shell"
+			"Hook, caption, dan headline",
+			"Naskah video dan thread",
+			"Jaga brand voice konsisten"
 		]
 	},
 	dimas: {
 		id: "dimas",
 		name: "Dimas Pratama",
 		short: "Dimas",
-		team: "Groq",
-		role: "Spesialis inferensi",
-		room: "Lab Groq",
-		home: "groqSeat",
+		team: "Visual",
+		role: "Visual Designer",
+		room: "Studio Visual",
+		home: "visualSeat",
 		focus: [
-			"Model cepat",
-			"Latensi dan token",
-			"Reasoning effort"
+			"Carousel, poster, thumbnail",
+			"Palet dan tipografi brand",
+			"Brief visual dan prompt gambar"
 		]
 	},
 	nia: {
 		id: "nia",
 		name: "Nia Kusuma",
 		short: "Nia",
-		team: "Cloudflare",
-		role: "Engineer edge",
-		room: "Ruang Edge",
-		home: "cfSeat",
+		team: "Video",
+		role: "Video & Motion Producer",
+		room: "Studio Video",
+		home: "videoSeat",
 		focus: [
-			"Workers & Wrangler",
-			"DNS, SSL, cache",
-			"Deploy ke edge"
+			"Storyboard Reels, TikTok, Shorts",
+			"Subtitle dan ritme potong",
+			"Arahan voiceover dan musik"
 		]
 	},
 	hermes: {
 		id: "hermes",
 		name: "Hermes",
 		short: "Hermes",
-		team: "Hermes",
-		role: "Koordinator lantai",
+		team: "Direktur",
+		role: "Creative Director",
 		room: "Lobi",
 		home: "lobbyDesk",
 		focus: [
 			"Bagi brief ke tim",
-			"Pimpin standup",
-			"Jaga konteks tetap rapi"
+			"Pimpin standup dan review",
+			"Jaga kualitas dan brand voice"
 		]
 	}
 };
@@ -114,25 +114,25 @@ var AGENT_IDS = [
 	"hermes"
 ];
 var NODES = {
-	gitSeat: {
+	stratSeat: {
 		x: -8.32,
 		z: 6.35,
 		yaw: Math.PI,
 		seat: true
 	},
-	termSeat: {
+	scriptSeat: {
 		x: 8.32,
 		z: 6.35,
 		yaw: Math.PI,
 		seat: true
 	},
-	groqSeat: {
+	visualSeat: {
 		x: -8.32,
 		z: -6.35,
 		yaw: 0,
 		seat: true
 	},
-	cfSeat: {
+	videoSeat: {
 		x: 8.32,
 		z: -6.35,
 		yaw: 0,
@@ -183,19 +183,19 @@ var NODES = {
 		yaw: Math.PI / 2,
 		seat: true
 	},
-	gitDoor: {
+	stratDoor: {
 		x: -8.32,
 		z: 2.25
 	},
-	termDoor: {
+	scriptDoor: {
 		x: 8.32,
 		z: 2.25
 	},
-	groqDoor: {
+	visualDoor: {
 		x: -8.32,
 		z: -2.25
 	},
-	cfDoor: {
+	videoDoor: {
 		x: 8.32,
 		z: -2.25
 	},
@@ -221,16 +221,16 @@ var NODES = {
 	}
 };
 var EDGES = [
-	["gitSeat", "gitDoor"],
-	["gitDoor", "hallW"],
+	["stratSeat", "stratDoor"],
+	["stratDoor", "hallW"],
 	["hallW", "hallC"],
 	["hallC", "hallE"],
-	["hallE", "termDoor"],
-	["termDoor", "termSeat"],
-	["hallW", "groqDoor"],
-	["groqDoor", "groqSeat"],
-	["hallE", "cfDoor"],
-	["cfDoor", "cfSeat"],
+	["hallE", "scriptDoor"],
+	["scriptDoor", "scriptSeat"],
+	["hallW", "visualDoor"],
+	["visualDoor", "visualSeat"],
+	["hallE", "videoDoor"],
+	["videoDoor", "videoSeat"],
 	["hallC", "meetDoor"],
 	["meetDoor", "meetBypass"],
 	["meetBypass", "meetHead"],
@@ -272,10 +272,10 @@ function route(from, to) {
 	return null;
 }
 var PLACE = {
-	gitSeat: "meja GitHub",
-	termSeat: "meja Termux",
-	groqSeat: "meja Groq",
-	cfSeat: "meja Edge",
+	stratSeat: "meja Strategi",
+	scriptSeat: "meja Naskah",
+	visualSeat: "meja Visual",
+	videoSeat: "meja Video",
 	meetHead: "ujung meja rapat",
 	meetWest: "meja rapat",
 	meetEast: "meja rapat",
@@ -283,10 +283,10 @@ var PLACE = {
 	meetSW: "meja rapat",
 	lounge: "sofa lobi",
 	lobbyDesk: "meja Hermes",
-	gitDoor: "pintu GitHub",
-	termDoor: "pintu Termux",
-	groqDoor: "pintu Groq",
-	cfDoor: "pintu Edge",
+	stratDoor: "pintu Strategi",
+	scriptDoor: "pintu Naskah",
+	visualDoor: "pintu Visual",
+	videoDoor: "pintu Video",
 	meetDoor: "ruang rapat",
 	lobbyEntry: "lobi",
 	hallW: "koridor barat",
@@ -295,8 +295,8 @@ var PLACE = {
 };
 var ROOMS = [
 	{
-		id: "github",
-		name: "Teluk GitHub",
+		id: "strategy",
+		name: "Ruang Strategi",
 		agent: "raka",
 		minX: -12.35,
 		maxX: -4.25,
@@ -304,8 +304,8 @@ var ROOMS = [
 		maxZ: 8.35
 	},
 	{
-		id: "termux",
-		name: "Lab Termux",
+		id: "script",
+		name: "Studio Naskah",
 		agent: "sari",
 		minX: 4.25,
 		maxX: 12.35,
@@ -313,8 +313,8 @@ var ROOMS = [
 		maxZ: 8.35
 	},
 	{
-		id: "groq",
-		name: "Lab Groq",
+		id: "visual",
+		name: "Studio Visual",
 		agent: "dimas",
 		minX: -12.35,
 		maxX: -4.25,
@@ -322,8 +322,8 @@ var ROOMS = [
 		maxZ: -1.7
 	},
 	{
-		id: "cf",
-		name: "Ruang Edge",
+		id: "video",
+		name: "Studio Video",
 		agent: "nia",
 		minX: 4.25,
 		maxX: 12.35,
@@ -351,56 +351,56 @@ var ROOMS = [
 ];
 var WORK_LINES = {
 	raka: [
-		"Review PR #184 — ada race di webhook.",
-		"CI hijau. Siap di-squash lalu merge.",
-		"Conflict di routes. Aku yang beresin.",
-		"Issue labelnya salah. Aku pindahkan."
+		"Tren minggu ini naik di Reels, bukan di feed.",
+		"Audiensnya paling aktif jam 19.00 sampai 21.00.",
+		"Kompetitor banyak pakai format tips cepat. Kita beda di angle.",
+		"Kalender konten bulan depan sudah aku isi setengah."
 	],
 	sari: [
-		"pkg update di sesi Termux selesai.",
-		"Job ini aku taruh di tmux, biar tidak putus.",
-		"ssh ke VPS. Log nginx bersih.",
-		"proot Debian siap kalau butuh toolchain."
+		"Hook ketiga paling kuat. Dua lainnya aku simpan.",
+		"Caption terlalu panjang. Aku pangkas jadi tiga baris.",
+		"Naskah 30 detik. Kalimat pembukanya harus nancap.",
+		"Nada tulisannya aku samakan dengan brand voice."
 	],
 	dimas: [
-		"gpt-oss di Groq, latensi masih di bawah 300ms.",
-		"Antrian inferensi kosong. Kirim saja.",
-		"Reasoning effort tinggi untuk brief yang panjang.",
-		"Jendela konteks aman. Bukan model 4K."
+		"Palet warna aku kunci dulu, baru layout.",
+		"Slide pertama carousel harus bisa dibaca sekali lirik.",
+		"Thumbnail ini kontrasnya kurang. Aku naikkan.",
+		"Tipografi dua font saja, biar rapi."
 	],
 	nia: [
-		"Worker login sudah di edge region SIN.",
-		"Cache HIT 94%. Origin jarang kepanggil.",
-		"DNS proxied, SSL full strict.",
-		"Wrangler deploy tadi hijau."
+		"Tiga detik pertama video menentukan. Aku pangkas intro.",
+		"Subtitle aku taruh di area aman layar.",
+		"Ritme potong dipercepat di bagian tengah.",
+		"Musik latar harus lebih pelan dari suara narasi."
 	],
 	hermes: [
-		"Lantai tenang. Kirim brief kalau ada tugas.",
-		"Satu pekerjaan, satu pemilik. Jangan dobel.",
-		"Konteks sesi aku rapikan tiap standup.",
+		"Lantai tenang. Kirim brief kalau ada konten yang mau dibuat.",
+		"Satu konten, satu pemilik. Jangan dobel.",
+		"Brand voice aku rapikan tiap standup.",
 		"Yang nganggur, mampir. Jangan nunggu di chat."
 	]
 };
 var LOUNGE_LINES = {
-	raka: "Sebentar di lobi. Mata butuh istirahat dari diff.",
-	sari: "Isi ulang dulu. Sesi Termux tetap hidup di tmux.",
-	dimas: "Modelnya aku biarkan hangat. Aku ambil air.",
-	nia: "Deploy tidak going. Aku boleh duduk semenit.",
+	raka: "Sebentar di lobi. Mata butuh istirahat dari grafik.",
+	sari: "Isi ulang dulu. Kalimat bagus datang pas lagi santai.",
+	dimas: "Layar aku tinggal sebentar. Mata perlu warna lain.",
+	nia: "Render lagi jalan. Aku boleh duduk semenit.",
 	hermes: "Lobi itu meja kerja juga. Orang lewat, aku tangkap."
 };
 var VISIT_LINES = {
-	raka: "Mampir. Ada diff yang mau kamu lihat bareng?",
-	sari: "Aku bawa satu perintah shell. Mau aku jalankan?",
-	dimas: "Ini bisa dipendekkan model. Mau aku coba?",
-	nia: "Kalau sudah beres, aku yang dorong ke edge.",
+	raka: "Mampir. Ada data audiens yang mau kamu lihat bareng?",
+	sari: "Aku bawa satu draf hook. Menurutmu kuat?",
+	dimas: "Ini visualnya sudah jadi. Mau kasih masukan?",
+	nia: "Storyboard-nya aku bawa. Cek alurnya sebentar?",
 	hermes: "Cuma cek. Kamu macet atau lagi fokus?"
 };
 var MEET_LINES = {
-	raka: "GitHub: dua PR terbuka, satu masih nunggu review.",
-	sari: "Termux: sesi bersih, tidak ada job gagal.",
-	dimas: "Groq: p99 inferensi masih di bawah 300ms.",
-	nia: "Edge: deploy terakhir hijau, cache hangat.",
-	hermes: "Catat. Tidak ada blocker yang dipakai bersama."
+	raka: "Strategi: tiga topik naik, angle minggu ini sudah dipilih.",
+	sari: "Naskah: dua caption selesai, satu naskah nunggu hook.",
+	dimas: "Visual: carousel kedua masuk revisi warna.",
+	nia: "Video: storyboard Reels siap, tinggal subtitle.",
+	hermes: "Catat. Yang telat, kabari aku sebelum makan siang."
 };
 var BOUNDS = {
 	minX: -12.22,
@@ -528,10 +528,10 @@ function build() {
 	add("brass", -7.5, 1.62, .08, 1.2, .2, 0, false);
 	add("brass", 7.5, 1.62, .08, 1.2, .2, 0, false);
 	add("brass", 9.15, 1.62, .08, 1.2, .2, 0, false);
-	add("rugGit", -8.3, 5.15, 7.5, .025, 6.1, .005, false);
-	add("rugTerm", 8.3, 5.15, 7.5, .025, 6.1, .005, false);
-	add("rugGroq", -8.3, -5.15, 7.5, .025, 6.1, .005, false);
-	add("rugCf", 8.3, -5.15, 7.5, .025, 6.1, .005, false);
+	add("rugStrat", -8.3, 5.15, 7.5, .025, 6.1, .005, false);
+	add("rugScript", 8.3, 5.15, 7.5, .025, 6.1, .005, false);
+	add("rugVisual", -8.3, -5.15, 7.5, .025, 6.1, .005, false);
+	add("rugVideo", 8.3, -5.15, 7.5, .025, 6.1, .005, false);
 	add("rugMeet", 0, -5.15, 7.7, .025, 6.1, .005, false);
 	add("rugLobby", 0, 5.2, 7.7, .025, 6, .005, false);
 	add("runner", 0, 0, 16.2, .02, 2.15, .008, false);
@@ -611,6 +611,66 @@ function blocked(x, z, radius = .32) {
 	for (const s of SOLIDS) if (x > s.x - s.w / 2 - radius && x < s.x + s.w / 2 + radius && z > s.z - s.d / 2 - radius && z < s.z + s.d / 2 + radius) return true;
 	return false;
 }
+var WORKERS = [
+	"raka",
+	"sari",
+	"dimas",
+	"nia"
+];
+var STANDUP = /standup|rapat|semua orang|tiap ruang|tiap studio|seluruh|satu status|status konten/;
+var CAMPAIGN = /kampanye|campaign|peluncuran|launch|paket konten|konten mingguan/;
+var SKILLS = {
+	raka: /riset|tren|trend|audiens|kompetitor|pesaing|kalender|strategi|analitik|analisis|\bseo\b|hashtag|angle|target pasar/,
+	sari: /caption|naskah|script|skrip|hook|headline|judul|thread|artikel|newsletter|copy|tulis|blog|voiceover teks/,
+	dimas: /desain|visual|carousel|karusel|thumbnail|poster|logo|warna|infografis|feed|banner|slide/,
+	nia: /video|reels|reel|tiktok|shorts|storyboard|subtitle|voiceover|musik|edit|motion|youtube/
+};
+function planBrief(text) {
+	const t = text.toLowerCase();
+	if (STANDUP.test(t)) return {
+		assignees: [...WORKERS],
+		standup: true,
+		groups: []
+	};
+	let picked = WORKERS.filter((id) => SKILLS[id].test(t));
+	if (CAMPAIGN.test(t) || picked.length === 0) picked = [...WORKERS];
+	const groups = [];
+	if (picked.includes("raka")) groups.push(["raka"]);
+	if (picked.includes("sari")) groups.push(["sari"]);
+	const parallel = picked.filter((id) => id === "dimas" || id === "nia");
+	if (parallel.length) groups.push(parallel);
+	groups.push(["hermes"]);
+	return {
+		assignees: picked,
+		standup: false,
+		groups
+	};
+}
+function clip(text, n = 78) {
+	const t = text.trim();
+	return t.length > n ? `${t.slice(0, n - 1)}…` : t;
+}
+function taskLine(id, text) {
+	const bit = clip(text, 72);
+	if (id === "raka") return `Strategi: aku riset angle dulu — ${bit}`;
+	if (id === "sari") return `Naskah: aku tulis hook dan caption — ${bit}`;
+	if (id === "dimas") return `Visual: aku buat konsep dan layout — ${bit}`;
+	if (id === "nia") return `Video: aku susun storyboard-nya — ${bit}`;
+	return bit;
+}
+function deliverLine(id, text) {
+	const bit = clip(text, 56);
+	if (id === "raka") return `Riset selesai: audiens, tren, dan angle untuk “${bit}”.`;
+	if (id === "sari") return `Naskah dan caption untuk “${bit}” siap.`;
+	if (id === "dimas") return `Konsep visual dan layout untuk “${bit}” siap.`;
+	if (id === "nia") return `Storyboard dan alur video untuk “${bit}” siap.`;
+	return `Review selesai. Paket konten “${bit}” siap publish.`;
+}
+function handoffLine(from, toShort) {
+	if (from === "raka") return `Aku bawa hasil riset ke ${toShort}.`;
+	if (from === "sari") return `Naskahnya aku antar ke ${toShort}.`;
+	return `Draf-nya aku serahkan ke ${toShort} untuk review.`;
+}
 var MEET_SEATS = [
 	"meetWest",
 	"meetEast",
@@ -618,10 +678,10 @@ var MEET_SEATS = [
 	"meetSW"
 ];
 var DOORS = {
-	raka: "gitDoor",
-	sari: "termDoor",
-	dimas: "groqDoor",
-	nia: "cfDoor",
+	raka: "stratDoor",
+	sari: "scriptDoor",
+	dimas: "visualDoor",
+	nia: "videoDoor",
 	hermes: "lobbyEntry"
 };
 function makeAgent(id, phase) {
@@ -676,6 +736,7 @@ var sim = {
 	selected: null,
 	hold: 0,
 	untilStandup: 22,
+	pipe: null,
 	clockMin: 552,
 	t: 0,
 	log: [],
@@ -798,56 +859,63 @@ function beginStandup() {
 	say(h, h.lineOverride, false);
 	go(h, "meetHead", "meet");
 }
-function clip(text, n = 78) {
-	const t = text.trim();
-	return t.length > n ? `${t.slice(0, n - 1)}…` : t;
-}
-function assignees(text) {
-	const t = text.toLowerCase();
-	if (/standup|rapat|semua orang|tiap ruang|seluruh|satu status/.test(t)) return [
-		"raka",
-		"sari",
-		"dimas",
-		"nia"
-	];
-	const ids = [];
-	if (/git|github|pull|commit|merge|repo|\bpr\b|review|\bci\b|kode/.test(t)) ids.push("raka");
-	if (/termux|terminal|shell|ssh|tmux|\bpkg\b|linux|skrip|script|\btes\b|bash/.test(t)) ids.push("sari");
-	if (/groq|model|infer|token|\bllm\b|latensi|reasoning|ringkas/.test(t)) ids.push("dimas");
-	if (/cloudflare|worker|edge|\bdns\b|\bcdn\b|deploy|wrangler|cache|\bssl\b/.test(t)) ids.push("nia");
-	return ids.length ? ids : [
-		"raka",
-		"sari",
-		"dimas",
-		"nia"
-	];
-}
-function taskLine(id, text) {
-	const bit = clip(text, 72);
-	if (id === "raka") return `GitHub: aku pecah jadi PR — ${bit}`;
-	if (id === "sari") return `Termux: aku jalankan dari shell — ${bit}`;
-	if (id === "dimas") return `Groq: aku lempar ke model cepat — ${bit}`;
-	if (id === "nia") return `Edge: aku siapkan Worker — ${bit}`;
-	return bit;
-}
+var STAGE_GAP = 11;
+var STAGE_START = 16;
 function assignBrief(text) {
 	const clean = clip(text, 180);
-	const ids = assignees(clean);
+	const plan = planBrief(clean);
 	sim.hold = 20;
 	sim.untilStandup = Math.max(sim.untilStandup, 36);
 	pushLog("Kamu", clean);
-	pushLog("Hermes", `Brief dibagi ke ${ids.map((id) => PROFILES[id].short).join(", ")}.`);
+	const names = plan.assignees.map((id) => PROFILES[id].short).join(", ");
+	pushLog("Hermes", plan.standup ? "Standup dipanggil. Semua ke ruang rapat." : `Brief dibagi ke ${names}.`);
 	const h = person("hermes");
-	h.lineOverride = "Yang kupanggil, ke meja rapat. Yang lain lanjut.";
+	h.lineOverride = plan.standup ? "Standup. Satu kabar, tanpa cerita panjang." : "Yang kupanggil, ke meja rapat. Yang lain lanjut.";
 	say(h, `Brief masuk: ${clip(clean, 64)}`, false);
 	go(h, "meetHead", "meet");
-	ids.forEach((id, i) => {
+	plan.assignees.forEach((id, i) => {
 		const a = person(id);
-		const line = taskLine(id, clean);
+		const line = plan.standup ? MEET_LINES[id] : taskLine(id, clean);
 		a.lineOverride = line;
 		say(a, line, false);
 		go(a, MEET_SEATS[i], "meet");
 	});
+	if (plan.standup) {
+		sim.pipe = null;
+		return;
+	}
+	sim.pipe = {
+		groups: plan.groups,
+		i: 0,
+		t: STAGE_START,
+		brief: clean
+	};
+	sim.hold = Math.max(sim.hold, 27);
+}
+function stepPipe(dt) {
+	const p = sim.pipe;
+	if (!p) return;
+	p.t -= dt;
+	if (p.t > 0) return;
+	const group = p.groups[p.i];
+	if (!group) {
+		sim.pipe = null;
+		return;
+	}
+	const next = p.groups[p.i + 1];
+	for (const id of group) {
+		const a = person(id);
+		say(a, deliverLine(id, p.brief), true);
+		if (next) {
+			const target = next[0];
+			a.lineOverride = handoffLine(id, PROFILES[target].short);
+			go(a, DOORS[target], "visit");
+		}
+	}
+	p.i += 1;
+	p.t = STAGE_GAP;
+	sim.hold = Math.max(sim.hold, 15);
+	if (!next) sim.pipe = null;
 }
 function stepAgent(a, dt) {
 	a.speechT = Math.max(0, a.speechT - dt);
@@ -897,6 +965,7 @@ function stepOffice(dt) {
 		beginStandup();
 		sim.untilStandup = 52 + Math.random() * 12;
 	}
+	stepPipe(dt);
 	for (const id of AGENT_IDS) stepAgent(sim.agents[id], dt);
 }
 function held(code) {
@@ -946,7 +1015,7 @@ function mountProbe() {
 		}
 	};
 }
-pushLog("Hermes", "Kantor dibuka. Lima orang sudah di mejanya.");
+pushLog("Hermes", "Studio dibuka. Lima orang sudah di mejanya.");
 var useOffice = create(() => ({
 	mode: "orbit",
 	paused: false,
@@ -994,8 +1063,8 @@ function submitBrief(text) {
 	if (!clean) return;
 	assignBrief(clean);
 	try {
-		const next = [clean, ...JSON.parse(localStorage.getItem("atrium-briefs") || "[]").filter((item) => item !== clean)].slice(0, 6);
-		localStorage.setItem("atrium-briefs", JSON.stringify(next));
+		const next = [clean, ...JSON.parse(localStorage.getItem("atrium-briefs-v2") || "[]").filter((item) => item !== clean)].slice(0, 6);
+		localStorage.setItem("atrium-briefs-v2", JSON.stringify(next));
 	} catch {}
 	sim.selected = "hermes";
 	sim.focus = "hermes";
@@ -1005,17 +1074,43 @@ function submitBrief(text) {
 		tick: s.tick + 1
 	}));
 }
+var labelNodes = /* @__PURE__ */ new Map();
 var SAMPLES = [
-	"Review PR autentikasi, lalu deploy Worker ke edge",
-	"Ukur latensi model Groq untuk ringkasan log",
-	"Jalankan suite tes di sesi Termux",
-	"Standup: satu status dari tiap ruangan"
+	"Kampanye 7 hari untuk peluncuran kopi susu baru",
+	"Naskah Reels 30 detik tentang tips hemat bulanan",
+	"Carousel 8 slide: 5 kesalahan pemula investasi",
+	"Standup: status konten minggu ini"
 ];
 var STATE_LABEL = {
 	work: "Di meja",
 	walk: "Berjalan",
 	talk: "Ngobrol"
 };
+function LabelLayer() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "label-layer",
+		"aria-hidden": "true",
+		children: [ROOMS.map((room) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "room-tag",
+			ref: (node) => {
+				if (node) labelNodes.set(`room-${room.id}`, node);
+				else labelNodes.delete(`room-${room.id}`);
+			},
+			children: room.name
+		}, room.id)), AGENT_IDS.map((id) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "bubble",
+			ref: (node) => {
+				if (node) labelNodes.set(id, node);
+				else labelNodes.delete(id);
+			},
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: PROFILES[id].short }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: PROFILES[id].team }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: statusText(sim.agents[id]) })
+			]
+		}, id))]
+	});
+}
 function Hud() {
 	const mode = useOffice((s) => s.mode);
 	const paused = useOffice((s) => s.paused);
@@ -1028,7 +1123,7 @@ function Hud() {
 	const [saved, setSaved] = (0, import_react.useState)([]);
 	(0, import_react.useEffect)(() => {
 		try {
-			const prev = JSON.parse(localStorage.getItem("atrium-briefs") || "[]");
+			const prev = JSON.parse(localStorage.getItem("atrium-briefs-v2") || "[]");
 			if (Array.isArray(prev)) setSaved(prev.slice(0, 4));
 		} catch {}
 	}, []);
@@ -1043,7 +1138,7 @@ function Hud() {
 						className: "brand",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 							className: "brand-kicker",
-							children: "Lantai agen"
+							children: "Tim kreatif"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { children: "Atrium" })]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
@@ -1110,10 +1205,10 @@ function Hud() {
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 								className: "brand-kicker",
-								children: "Kantor yang bisa dilihat"
+								children: "Studio yang bisa dilihat"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { children: "Lima orang, enam ruangan." }),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "GitHub, Termux, Groq, Cloudflare, dan Hermes jalan sendiri, kerja di meja, lalu ngobrol lewat gelembung. Kamu bisa keliling atau kirim brief — Hermes yang membagi." }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "Strategi, Naskah, Visual, Video, dan Direktur Kreatif bekerja di studionya masing-masing, lalu menyerahkan hasil satu ke satu lewat gelembung. Kamu bisa keliling atau kirim brief — Hermes yang membagi dan menjaga alurnya." }),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "intro-actions",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
@@ -1215,7 +1310,7 @@ function Hud() {
 								id: "brief",
 								value: brief,
 								onChange: (event) => setBrief(event.target.value),
-								placeholder: "Tulis tugas, misalnya deploy login ke edge",
+								placeholder: "Tulis brief konten, misalnya carousel 8 slide tips hemat",
 								maxLength: 180
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
@@ -1284,7 +1379,7 @@ function Dossier({ id }) {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: profile.focus.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: item }, item)) }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "note",
-				children: "Percakapan ini disutradarai di Atrium, bukan panggilan live ke akun GitHub, Groq, Cloudflare, atau sesi Termux di perangkatmu."
+				children: "Percakapan dan hasil kerja ini masih skenario di Atrium, belum dibuat oleh AI sungguhan."
 			})
 		]
 	});
@@ -1326,7 +1421,7 @@ function MiniMap() {
 					x: (X(room.minX) + X(room.maxX)) / 2,
 					y: (Y(room.minZ) + Y(room.maxZ)) / 2,
 					textAnchor: "middle",
-					children: room.name.replace("Teluk ", "").replace("Lab ", "").replace("Ruang ", "")
+					children: room.name.replace("Studio ", "").replace("Ruang ", "")
 				})]
 			}, room.id)),
 			AGENT_IDS.map((id) => {
@@ -1627,8 +1722,15 @@ function Body({ shirt, pants, bun, glasses }) {
 		}) : null
 	] });
 }
+var IDS = [
+	"raka",
+	"sari",
+	"dimas",
+	"nia",
+	"hermes"
+];
 function Agents() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: AGENT_IDS.map((id) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AgentView, { id }, id)) });
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: IDS.map((id) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AgentView, { id }, id)) });
 }
 function AgentView({ id }) {
 	const ref = (0, import_react.useRef)(null);
@@ -1736,67 +1838,6 @@ function Visitor() {
 		})
 	});
 }
-function Bubbles() {
-	const anchors = (0, import_react.useRef)({});
-	const lines = (0, import_react.useRef)({});
-	useFrame(() => {
-		for (const id of AGENT_IDS) {
-			const anchor = anchors.current[id];
-			const a = sim.agents[id];
-			if (!anchor) continue;
-			const lift = a.seated ? -.28 : a.state === "walk" ? Math.abs(Math.sin(a.bob)) * .055 : 0;
-			anchor.position.set(a.x, 2.02 + lift, a.z);
-			const line = lines.current[id];
-			if (!line) continue;
-			const text = statusText(a);
-			if (line.textContent !== text) line.textContent = text;
-		}
-	});
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: AGENT_IDS.map((id) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("group", {
-		ref: (node) => {
-			anchors.current[id] = node;
-		},
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Html, {
-			transform: true,
-			sprite: true,
-			distanceFactor: 9,
-			center: true,
-			pointerEvents: "none",
-			zIndexRange: [8, 0],
-			wrapperClass: "bubble-anchor",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "bubble",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: PROFILES[id].short }),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: PROFILES[id].team }),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { ref: (node) => {
-						lines.current[id] = node;
-					} })
-				]
-			})
-		})
-	}, id)) });
-}
-function RoomLabels() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: ROOMS.map((room) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Html, {
-		position: [
-			(room.minX + room.maxX) / 2,
-			1.42,
-			(room.minZ + room.maxZ) / 2
-		],
-		center: true,
-		transform: true,
-		sprite: true,
-		distanceFactor: 12,
-		pointerEvents: "none",
-		zIndexRange: [4, 0],
-		wrapperClass: "bubble-anchor",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			className: "room-tag",
-			children: room.name
-		})
-	}, room.id)) });
-}
 var STYLE = {
 	ground: {
 		color: PAL.ground,
@@ -1894,29 +1935,29 @@ var STYLE = {
 		cast: false,
 		receive: false
 	},
-	rugGit: {
-		color: PAL.rugGit,
+	rugStrat: {
+		color: PAL.rugStrat,
 		roughness: 1,
 		metalness: 0,
 		cast: false,
 		receive: true
 	},
-	rugTerm: {
-		color: PAL.rugTerm,
+	rugScript: {
+		color: PAL.rugScript,
 		roughness: 1,
 		metalness: 0,
 		cast: false,
 		receive: true
 	},
-	rugGroq: {
-		color: PAL.rugGroq,
+	rugVisual: {
+		color: PAL.rugVisual,
 		roughness: 1,
 		metalness: 0,
 		cast: false,
 		receive: true
 	},
-	rugCf: {
-		color: PAL.rugCf,
+	rugVideo: {
+		color: PAL.rugVideo,
 		roughness: 1,
 		metalness: 0,
 		cast: false,
@@ -1970,6 +2011,7 @@ function buildBuckets() {
 var desired = new Vector3();
 var look = new Vector3();
 var smooth = new Vector3(12, 14, 14);
+var projected = new Vector3();
 function StaticOffice() {
 	const buckets = (0, import_react.useMemo)(() => buildBuckets(), []);
 	const screen = (0, import_react.useRef)(null);
@@ -2011,6 +2053,34 @@ function StaticOffice() {
 			depthWrite: false
 		})]
 	})] });
+}
+function Projector() {
+	const camera = useThree((state) => state.camera);
+	const size = useThree((state) => state.size);
+	useFrame(() => {
+		const place = (key, x, y, z, center) => {
+			const el = labelNodes.get(key);
+			if (!el) return;
+			projected.set(x, y, z).project(camera);
+			const sx = (projected.x * .5 + .5) * size.width;
+			const sy = (-projected.y * .5 + .5) * size.height;
+			const visible = projected.z < 1 && sx > -80 && sy > -80 && sx < size.width + 80 && sy < size.height + 80;
+			el.style.opacity = visible ? "1" : "0";
+			el.style.transform = center ? `translate3d(${sx}px, ${sy}px, 0) translate(-50%, -50%)` : `translate3d(${sx}px, ${sy}px, 0) translate(-50%, -118%)`;
+		};
+		for (const id of AGENT_IDS) {
+			const agent = sim.agents[id];
+			const lift = agent.seated ? -.28 : 0;
+			place(id, agent.x, 1.95 + lift, agent.z, false);
+			const line = labelNodes.get(id)?.querySelector("p");
+			if (line) {
+				const text = statusText(agent);
+				if (line.textContent !== text) line.textContent = text;
+			}
+		}
+		for (const room of ROOMS) place(`room-${room.id}`, (room.minX + room.maxX) / 2, .15, (room.minZ + room.maxZ) / 2, true);
+	});
+	return null;
 }
 function Systems() {
 	const camera = useThree((state) => state.camera);
@@ -2156,8 +2226,7 @@ function OfficeCanvas() {
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(StaticOffice, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Agents, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Visitor, {}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Bubbles, {}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(RoomLabels, {}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Projector, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Systems, {})
 			]
 		})
@@ -2206,7 +2275,11 @@ function OfficeApp() {
 	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "office-root",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(OfficeCanvas, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Hud, {})]
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(OfficeCanvas, {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LabelLayer, {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Hud, {})
+		]
 	});
 }
 //#endregion

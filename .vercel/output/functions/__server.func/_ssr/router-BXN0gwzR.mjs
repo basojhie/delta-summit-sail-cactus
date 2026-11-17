@@ -1,10 +1,10 @@
 import { i as __toESM, n as __exportAll } from "../_runtime.mjs";
-import { h as require_react, m as require_jsx_runtime } from "../_libs/@react-three/drei+[...].mjs";
+import { f as require_jsx_runtime, p as require_react } from "../_libs/@react-three/fiber+[...].mjs";
 import { n as TriangleAlert } from "../_libs/lucide-react.mjs";
 import { _ as createFileRoute, d as Scripts, f as HeadContent, g as lazyRouteComponent, h as Outlet, m as createRouter, v as createRootRoute, y as useRouter } from "../_libs/@tanstack/react-router+[...].mjs";
 import { a as union, i as string, n as number, r as object, t as literal } from "../_libs/zod.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-DGWp4lHW.js
-var router_DGWp4lHW_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
+//#region node_modules/.nitro/vite/services/ssr/assets/router-BXN0gwzR.js
+var router_BXN0gwzR_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var FALLBACK_MESSAGE = "An unexpected error occurred. Try reloading the page.";
@@ -332,7 +332,7 @@ function PreviewHostBridge() {
 	}, [router]);
 	return null;
 }
-var styles_default = "/assets/styles-D8bNohXs.css";
+var styles_default = "/assets/styles-DWudYSYB.css";
 var APP_NAME = "Atrium";
 var Route$1 = createRootRoute({
 	head: () => ({
@@ -345,7 +345,7 @@ var Route$1 = createRootRoute({
 			{ title: APP_NAME },
 			{
 				name: "description",
-				content: "Kantor 3D untuk lima agen: GitHub, Termux, Groq, Cloudflare, dan Hermes."
+				content: "Studio 3D untuk lima agen tim kreatif konten: Strategi, Naskah, Visual, Video, dan Creative Director."
 			},
 			{
 				name: "theme-color",
@@ -395,7 +395,7 @@ var Route$1 = createRootRoute({
 		] })]
 	})
 });
-var $$splitComponentImporter = () => import("./routes-SmHxHTey.mjs");
+var $$splitComponentImporter = () => import("./routes-CgfA3IqR.mjs");
 var rootRouteChildren = { IndexRoute: createFileRoute("/")({ component: lazyRouteComponent($$splitComponentImporter, "component") }).update({
 	id: "/",
 	path: "/",
@@ -410,4 +410,4 @@ function getRouter() {
 	});
 }
 //#endregion
-export { getRouter, router_DGWp4lHW_exports as t };
+export { getRouter, router_BXN0gwzR_exports as t };

@@ -1,5 +1,5 @@
 import { n as __exportAll } from "../_runtime.mjs";
-import { h as require_react, m as require_jsx_runtime } from "../_libs/@react-three/drei+[...].mjs";
+import { f as require_jsx_runtime, p as require_react } from "../_libs/@react-three/fiber+[...].mjs";
 import { A as getStylesheetHref, B as isPromise, C as fromJSON, E as toCrossJSONStream, F as executeRewriteInput, H as isRedirect, I as invariant, M as resolveManifestCssLink, N as waitForReason, P as _getRenderedMatches, T as toCrossJSONAsync, U as rootRouteId, W as isNotFound, a as isSsrResponse, c as stripSsrResponseBody, i as disposeSsrResponse, j as resolveManifestAssetLink, k as getScriptPreloadAttrs, n as bindSsrResponseToRequest, o as normalizeSsrResponse, p as RouterProvider, r as defineHandlerCallback, s as replaceSsrResponse, t as renderRouterToStream, z as isDangerousProtocol } from "../_libs/@tanstack/react-router+[...].mjs";
 import { n as createServerHistory } from "../_libs/tanstack__history.mjs";
 import { a as defaultSerovalDeserializerPlugins, i as createRawStreamRPCPlugin, n as attachRouterServerSsrUtils, o as makeSerovalPlugin, r as getNormalizedURL, s as createSerializationAdapter, t as mergeHeaders } from "../_libs/@tanstack/router-core+[...].mjs";
@@ -101,7 +101,7 @@ var HEADERS = { TSS_SHELL: "X-TSS_SHELL" };
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-DCJGV0GN.mjs");
+	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-BNomC8Y5.mjs");
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -1342,7 +1342,7 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		import("./router-DGWp4lHW.mjs").then((n) => n.t),
+		import("./router-BXN0gwzR.mjs").then((n) => n.t),
 		import("./start-5Z2QO8AU.mjs"),
 		import("./empty-plugin-adapters-D9UWiqvJ.mjs")
 	]);
