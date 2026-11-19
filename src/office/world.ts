@@ -67,7 +67,7 @@ export const PROFILES: Record<AgentId, Profile> = {
     id: "raka",
     name: "Raka Santoso",
     short: "Raka",
-    team: "Strategi",
+    team: "Ide",
     role: "Strategi & Riset Konten",
     room: "Ruang Strategi",
     home: "stratSeat",
@@ -77,21 +77,21 @@ export const PROFILES: Record<AgentId, Profile> = {
     id: "sari",
     name: "Sari Wulandari",
     short: "Sari",
-    team: "Naskah",
-    role: "Copywriter & Scriptwriter",
-    room: "Studio Naskah",
+    team: "Cerita",
+    role: "Storyteller & Penulis Naskah",
+    room: "Studio Cerita",
     home: "scriptSeat",
-    focus: ["Hook, caption, dan headline", "Naskah video dan thread", "Jaga brand voice konsisten"],
+    focus: ["Cerita pendek, kisah brand, dan thread", "Hook, caption, dan naskah video", "Jaga alur dan suara cerita konsisten"],
   },
   dimas: {
     id: "dimas",
     name: "Dimas Pratama",
     short: "Dimas",
-    team: "Visual",
-    role: "Visual Designer",
-    room: "Studio Visual",
+    team: "Foto",
+    role: "Fotografer & Visual Creator",
+    room: "Studio Foto",
     home: "visualSeat",
-    focus: ["Carousel, poster, thumbnail", "Palet dan tipografi brand", "Brief visual dan prompt gambar"],
+    focus: ["Konsep foto, moodboard, dan shot list", "Carousel, poster, dan thumbnail", "Palet, komposisi, dan prompt gambar"],
   },
   nia: {
     id: "nia",
@@ -199,8 +199,8 @@ export function route(from: string, to: string): string[] | null {
 
 export const PLACE: Record<string, string> = {
   stratSeat: "meja Strategi",
-  scriptSeat: "meja Naskah",
-  visualSeat: "meja Visual",
+  scriptSeat: "meja Cerita",
+  visualSeat: "meja Foto",
   videoSeat: "meja Video",
   meetHead: "ujung meja rapat",
   meetWest: "meja rapat",
@@ -210,8 +210,8 @@ export const PLACE: Record<string, string> = {
   lounge: "sofa lobi",
   lobbyDesk: "meja Hermes",
   stratDoor: "pintu Strategi",
-  scriptDoor: "pintu Naskah",
-  visualDoor: "pintu Visual",
+  scriptDoor: "pintu Cerita",
+  visualDoor: "pintu Foto",
   videoDoor: "pintu Video",
   meetDoor: "ruang rapat",
   lobbyEntry: "lobi",
@@ -232,8 +232,8 @@ export type Room = {
 
 export const ROOMS: Room[] = [
   { id: "strategy", name: "Ruang Strategi", agent: "raka", minX: -12.35, maxX: -4.25, minZ: 1.7, maxZ: 8.35 },
-  { id: "script", name: "Studio Naskah", agent: "sari", minX: 4.25, maxX: 12.35, minZ: 1.7, maxZ: 8.35 },
-  { id: "visual", name: "Studio Visual", agent: "dimas", minX: -12.35, maxX: -4.25, minZ: -8.35, maxZ: -1.7 },
+  { id: "script", name: "Studio Cerita", agent: "sari", minX: 4.25, maxX: 12.35, minZ: 1.7, maxZ: 8.35 },
+  { id: "visual", name: "Studio Foto", agent: "dimas", minX: -12.35, maxX: -4.25, minZ: -8.35, maxZ: -1.7 },
   { id: "video", name: "Studio Video", agent: "nia", minX: 4.25, maxX: 12.35, minZ: -8.35, maxZ: -1.7 },
   { id: "meet", name: "Ruang Rapat", agent: null, minX: -4.25, maxX: 4.25, minZ: -8.35, maxZ: -1.7 },
   { id: "lobby", name: "Lobi", agent: "hermes", minX: -4.25, maxX: 4.25, minZ: 1.7, maxZ: 8.35 },
@@ -249,13 +249,13 @@ export const WORK_LINES: Record<AgentId, string[]> = {
   sari: [
     "Hook ketiga paling kuat. Dua lainnya aku simpan.",
     "Caption terlalu panjang. Aku pangkas jadi tiga baris.",
-    "Naskah 30 detik. Kalimat pembukanya harus nancap.",
+    "Cerita ini butuh pembuka yang nancap, lalu twist di akhir.",
     "Nada tulisannya aku samakan dengan brand voice.",
   ],
   dimas: [
     "Palet warna aku kunci dulu, baru layout.",
-    "Slide pertama carousel harus bisa dibaca sekali lirik.",
-    "Thumbnail ini kontrasnya kurang. Aku naikkan.",
+    "Satu foto, satu pesan. Komposisinya aku sederhanakan.",
+    "Shot list sudah aku susun. Cahaya paling bagus pagi hari.",
     "Tipografi dua font saja, biar rapi.",
   ],
   nia: [
@@ -283,15 +283,15 @@ export const LOUNGE_LINES: Record<AgentId, string> = {
 export const VISIT_LINES: Record<AgentId, string> = {
   raka: "Mampir. Ada data audiens yang mau kamu lihat bareng?",
   sari: "Aku bawa satu draf hook. Menurutmu kuat?",
-  dimas: "Ini visualnya sudah jadi. Mau kasih masukan?",
+  dimas: "Moodboard fotonya sudah jadi. Mau kasih masukan?",
   nia: "Storyboard-nya aku bawa. Cek alurnya sebentar?",
   hermes: "Cuma cek. Kamu macet atau lagi fokus?",
 };
 
 export const MEET_LINES: Record<AgentId, string> = {
   raka: "Strategi: tiga topik naik, angle minggu ini sudah dipilih.",
-  sari: "Naskah: dua caption selesai, satu naskah nunggu hook.",
-  dimas: "Visual: carousel kedua masuk revisi warna.",
+  sari: "Cerita: dua kisah selesai, satu naskah nunggu hook.",
+  dimas: "Foto: moodboard kedua masuk revisi warna.",
   nia: "Video: storyboard Reels siap, tinggal subtitle.",
   hermes: "Catat. Yang telat, kabari aku sebelum makan siang.",
 };

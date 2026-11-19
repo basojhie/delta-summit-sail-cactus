@@ -498,3 +498,226 @@
 @media (prefers-reduced-motion: reduce) {
   .bubble, .text-btn, .icon-btn { transition: none; }
 }
+
+/* --- AI results panel --- */
+.results {
+  position: absolute;
+  inset: 0 0 0 0;
+  margin: 0 auto;
+  width: min(48rem, 100%);
+  max-height: 100%;
+  overflow: auto;
+  border-radius: 1.15rem;
+  padding: 0.9rem 1rem 1.1rem;
+  background: color-mix(in srgb, var(--color-paper) 96%, transparent);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 10px 30px rgba(28, 25, 22, 0.12);
+  backdrop-filter: blur(12px);
+}
+.results h2 {
+  margin: 0.15rem 0 0.35rem;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+.res-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+.res-tabs {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding: 0.25rem 0 0.6rem;
+}
+.res-tab {
+  display: grid;
+  min-width: 5.5rem;
+  min-height: 2.75rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--color-line);
+  background: transparent;
+  color: var(--color-ink);
+  font-weight: 600;
+  text-align: left;
+}
+.res-tab small {
+  font-weight: 400;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+}
+.res-tab.is-on {
+  border-color: var(--color-ink);
+  box-shadow: inset 0 0 0 1px var(--color-ink);
+}
+.res-body {
+  display: grid;
+  gap: 0.7rem;
+}
+.res-field {
+  display: grid;
+  gap: 0.15rem;
+}
+.res-field dt {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.res-field dd {
+  margin: 0;
+  line-height: 1.5;
+}
+.res-field ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+.res-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.res-chips span {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--color-mist);
+  font-size: 0.82rem;
+}
+.story-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+}
+.story {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.65;
+}
+.res-raw {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+.res-error {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.7rem;
+  background: #f6dcd2;
+  color: #6b2210;
+}
+.muted {
+  color: var(--color-muted);
+  margin: 0;
+}
+.small {
+  font-size: 0.8rem;
+}
+.shot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.8rem;
+}
+.shot h4 {
+  margin: 0.4rem 0 0.15rem;
+}
+.shot p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.shot-img {
+  margin: 0;
+  aspect-ratio: 1 / 1;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: var(--color-mist);
+}
+.shot-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.shot-wait {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+.scenes {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.scenes p {
+  margin: 0.1rem 0 0;
+}
+.player {
+  display: grid;
+  gap: 0.5rem;
+}
+.player-stage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  max-height: 22rem;
+  margin: 0 auto;
+  width: 100%;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: #151311;
+}
+.player-stage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.kb {
+  animation: kenburns linear forwards;
+}
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.12) translate(-2%, -1%); }
+}
+.player-caption {
+  position: absolute;
+  left: 0.8rem;
+  right: 0.8rem;
+  bottom: 1rem;
+  margin: 0;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.6rem;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+}
+.player-line {
+  margin: 0;
+  font-size: 0.92rem;
+}
+.player-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.player-voice {
+  display: inline-flex;
+  gap: 0.3rem;
+  align-items: center;
+  font-size: 0.85rem;
+}
+.player-prefetch {
+  display: none;
+}
+@media (max-width: 800px) {
+  .results {
+    width: 100%;
+  }
+}

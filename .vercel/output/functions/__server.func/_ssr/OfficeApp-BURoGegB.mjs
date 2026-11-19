@@ -1,9 +1,9 @@
 import { i as __toESM } from "../_runtime.mjs";
 import { a as BoxGeometry, c as CanvasTexture, f as require_jsx_runtime, l as SRGBColorSpace, n as useFrame, p as require_react, r as useThree, t as Canvas, u as Vector3 } from "../_libs/@react-three/fiber+[...].mjs";
-import { a as Pause, c as Clock3, i as Play, o as Gauge, r as Send, s as Footprints, t as X } from "../_libs/lucide-react.mjs";
+import { a as Play, c as Footprints, d as Clock3, i as Send, l as Film, o as Pause, r as Square, s as Gauge, t as X, u as Download } from "../_libs/lucide-react.mjs";
 import { t as create } from "../_libs/zustand.mjs";
 import { t as mergeGeometries } from "../_libs/three.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/OfficeApp-DA-hfDd4.js
+//#region node_modules/.nitro/vite/services/ssr/assets/OfficeApp-BURoGegB.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var PAL = {
@@ -39,7 +39,7 @@ var PROFILES = {
 		id: "raka",
 		name: "Raka Santoso",
 		short: "Raka",
-		team: "Strategi",
+		team: "Ide",
 		role: "Strategi & Riset Konten",
 		room: "Ruang Strategi",
 		home: "stratSeat",
@@ -53,28 +53,28 @@ var PROFILES = {
 		id: "sari",
 		name: "Sari Wulandari",
 		short: "Sari",
-		team: "Naskah",
-		role: "Copywriter & Scriptwriter",
-		room: "Studio Naskah",
+		team: "Cerita",
+		role: "Storyteller & Penulis Naskah",
+		room: "Studio Cerita",
 		home: "scriptSeat",
 		focus: [
-			"Hook, caption, dan headline",
-			"Naskah video dan thread",
-			"Jaga brand voice konsisten"
+			"Cerita pendek, kisah brand, dan thread",
+			"Hook, caption, dan naskah video",
+			"Jaga alur dan suara cerita konsisten"
 		]
 	},
 	dimas: {
 		id: "dimas",
 		name: "Dimas Pratama",
 		short: "Dimas",
-		team: "Visual",
-		role: "Visual Designer",
-		room: "Studio Visual",
+		team: "Foto",
+		role: "Fotografer & Visual Creator",
+		room: "Studio Foto",
 		home: "visualSeat",
 		focus: [
-			"Carousel, poster, thumbnail",
-			"Palet dan tipografi brand",
-			"Brief visual dan prompt gambar"
+			"Konsep foto, moodboard, dan shot list",
+			"Carousel, poster, dan thumbnail",
+			"Palet, komposisi, dan prompt gambar"
 		]
 	},
 	nia: {
@@ -273,8 +273,8 @@ function route(from, to) {
 }
 var PLACE = {
 	stratSeat: "meja Strategi",
-	scriptSeat: "meja Naskah",
-	visualSeat: "meja Visual",
+	scriptSeat: "meja Cerita",
+	visualSeat: "meja Foto",
 	videoSeat: "meja Video",
 	meetHead: "ujung meja rapat",
 	meetWest: "meja rapat",
@@ -284,8 +284,8 @@ var PLACE = {
 	lounge: "sofa lobi",
 	lobbyDesk: "meja Hermes",
 	stratDoor: "pintu Strategi",
-	scriptDoor: "pintu Naskah",
-	visualDoor: "pintu Visual",
+	scriptDoor: "pintu Cerita",
+	visualDoor: "pintu Foto",
 	videoDoor: "pintu Video",
 	meetDoor: "ruang rapat",
 	lobbyEntry: "lobi",
@@ -305,7 +305,7 @@ var ROOMS = [
 	},
 	{
 		id: "script",
-		name: "Studio Naskah",
+		name: "Studio Cerita",
 		agent: "sari",
 		minX: 4.25,
 		maxX: 12.35,
@@ -314,7 +314,7 @@ var ROOMS = [
 	},
 	{
 		id: "visual",
-		name: "Studio Visual",
+		name: "Studio Foto",
 		agent: "dimas",
 		minX: -12.35,
 		maxX: -4.25,
@@ -359,13 +359,13 @@ var WORK_LINES = {
 	sari: [
 		"Hook ketiga paling kuat. Dua lainnya aku simpan.",
 		"Caption terlalu panjang. Aku pangkas jadi tiga baris.",
-		"Naskah 30 detik. Kalimat pembukanya harus nancap.",
+		"Cerita ini butuh pembuka yang nancap, lalu twist di akhir.",
 		"Nada tulisannya aku samakan dengan brand voice."
 	],
 	dimas: [
 		"Palet warna aku kunci dulu, baru layout.",
-		"Slide pertama carousel harus bisa dibaca sekali lirik.",
-		"Thumbnail ini kontrasnya kurang. Aku naikkan.",
+		"Satu foto, satu pesan. Komposisinya aku sederhanakan.",
+		"Shot list sudah aku susun. Cahaya paling bagus pagi hari.",
 		"Tipografi dua font saja, biar rapi."
 	],
 	nia: [
@@ -391,14 +391,14 @@ var LOUNGE_LINES = {
 var VISIT_LINES = {
 	raka: "Mampir. Ada data audiens yang mau kamu lihat bareng?",
 	sari: "Aku bawa satu draf hook. Menurutmu kuat?",
-	dimas: "Ini visualnya sudah jadi. Mau kasih masukan?",
+	dimas: "Moodboard fotonya sudah jadi. Mau kasih masukan?",
 	nia: "Storyboard-nya aku bawa. Cek alurnya sebentar?",
 	hermes: "Cuma cek. Kamu macet atau lagi fokus?"
 };
 var MEET_LINES = {
 	raka: "Strategi: tiga topik naik, angle minggu ini sudah dipilih.",
-	sari: "Naskah: dua caption selesai, satu naskah nunggu hook.",
-	dimas: "Visual: carousel kedua masuk revisi warna.",
+	sari: "Cerita: dua kisah selesai, satu naskah nunggu hook.",
+	dimas: "Foto: moodboard kedua masuk revisi warna.",
 	nia: "Video: storyboard Reels siap, tinggal subtitle.",
 	hermes: "Catat. Yang telat, kabari aku sebelum makan siang."
 };
@@ -621,8 +621,8 @@ var STANDUP = /standup|rapat|semua orang|tiap ruang|tiap studio|seluruh|satu sta
 var CAMPAIGN = /kampanye|campaign|peluncuran|launch|paket konten|konten mingguan/;
 var SKILLS = {
 	raka: /riset|tren|trend|audiens|kompetitor|pesaing|kalender|strategi|analitik|analisis|\bseo\b|hashtag|angle|target pasar/,
-	sari: /caption|naskah|script|skrip|hook|headline|judul|thread|artikel|newsletter|copy|tulis|blog|voiceover teks/,
-	dimas: /desain|visual|carousel|karusel|thumbnail|poster|logo|warna|infografis|feed|banner|slide/,
+	sari: /cerita|kisah|story|storytelling|narasi|fiksi|dongeng|caption|naskah|script|skrip|hook|headline|judul|thread|artikel|newsletter|copy|tulis|blog|voiceover teks/,
+	dimas: /foto|fotografi|photo|photoshoot|moodboard|shot list|portrait|potret|desain|visual|carousel|karusel|thumbnail|poster|logo|warna|infografis|feed|banner|slide/,
 	nia: /video|reels|reel|tiktok|shorts|storyboard|subtitle|voiceover|musik|edit|motion|youtube/
 };
 function planBrief(text) {
@@ -653,22 +653,22 @@ function clip(text, n = 78) {
 function taskLine(id, text) {
 	const bit = clip(text, 72);
 	if (id === "raka") return `Strategi: aku riset angle dulu — ${bit}`;
-	if (id === "sari") return `Naskah: aku tulis hook dan caption — ${bit}`;
-	if (id === "dimas") return `Visual: aku buat konsep dan layout — ${bit}`;
+	if (id === "sari") return `Cerita: aku tulis alur, hook, dan caption — ${bit}`;
+	if (id === "dimas") return `Foto: aku susun konsep, moodboard, dan shot list — ${bit}`;
 	if (id === "nia") return `Video: aku susun storyboard-nya — ${bit}`;
 	return bit;
 }
 function deliverLine(id, text) {
 	const bit = clip(text, 56);
 	if (id === "raka") return `Riset selesai: audiens, tren, dan angle untuk “${bit}”.`;
-	if (id === "sari") return `Naskah dan caption untuk “${bit}” siap.`;
-	if (id === "dimas") return `Konsep visual dan layout untuk “${bit}” siap.`;
+	if (id === "sari") return `Cerita dan caption untuk “${bit}” siap.`;
+	if (id === "dimas") return `Konsep foto, moodboard, dan shot list untuk “${bit}” siap.`;
 	if (id === "nia") return `Storyboard dan alur video untuk “${bit}” siap.`;
 	return `Review selesai. Paket konten “${bit}” siap publish.`;
 }
 function handoffLine(from, toShort) {
 	if (from === "raka") return `Aku bawa hasil riset ke ${toShort}.`;
-	if (from === "sari") return `Naskahnya aku antar ke ${toShort}.`;
+	if (from === "sari") return `Ceritanya aku antar ke ${toShort}.`;
 	return `Draf-nya aku serahkan ke ${toShort} untuk review.`;
 }
 var MEET_SEATS = [
@@ -860,7 +860,6 @@ function beginStandup() {
 	go(h, "meetHead", "meet");
 }
 var STAGE_GAP = 11;
-var STAGE_START = 16;
 function assignBrief(text) {
 	const clean = clip(text, 180);
 	const plan = planBrief(clean);
@@ -880,17 +879,32 @@ function assignBrief(text) {
 		say(a, line, false);
 		go(a, MEET_SEATS[i], "meet");
 	});
-	if (plan.standup) {
-		sim.pipe = null;
-		return;
-	}
-	sim.pipe = {
-		groups: plan.groups,
-		i: 0,
-		t: STAGE_START,
+	sim.pipe = null;
+	sim.hold = Math.max(sim.hold, 27);
+	return {
+		plan,
 		brief: clean
 	};
-	sim.hold = Math.max(sim.hold, 27);
+}
+/** An agent starts (or keeps) working on its part while the model call is running. */
+function agentWorking(id, line) {
+	const a = person(id);
+	a.lineOverride = line;
+	say(a, line, false);
+	sim.hold = Math.max(sim.hold, 40);
+}
+/** An agent announces real finished work and walks it over to the next agent. */
+function agentDelivers(id, line, next) {
+	const a = person(id);
+	say(a, line, true);
+	if (next) {
+		a.lineOverride = handoffLine(id, PROFILES[next].short);
+		go(a, DOORS[next], "visit");
+	}
+	sim.hold = Math.max(sim.hold, 40);
+}
+function agentFailed(id, line) {
+	say(person(id), line, true);
 }
 function stepPipe(dt) {
 	const p = sim.pipe;
@@ -1016,6 +1030,179 @@ function mountProbe() {
 	};
 }
 pushLog("Hermes", "Studio dibuka. Lima orang sudah di mejanya.");
+var AiError = class extends Error {
+	code;
+	constructor(code, message) {
+		super(message);
+		this.code = code;
+	}
+};
+var ROLE = {
+	raka: "Raka (Ide & Riset)",
+	sari: "Sari (Cerita)",
+	dimas: "Dimas (Foto)",
+	nia: "Nia (Video)",
+	hermes: "Hermes (Creative Director)"
+};
+var sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+/** Pulls the first JSON object out of a model reply, tolerating code fences and chatter. */
+function parseJson(text) {
+	const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+	const start = trimmed.indexOf("{");
+	const end = trimmed.lastIndexOf("}");
+	if (start < 0 || end <= start) return null;
+	try {
+		const value = JSON.parse(trimmed.slice(start, end + 1));
+		return value && typeof value === "object" && !Array.isArray(value) ? value : null;
+	} catch {
+		return null;
+	}
+}
+var str = (v) => typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "";
+var list = (v) => Array.isArray(v) ? v.map(str).filter(Boolean) : [];
+var objs = (v) => Array.isArray(v) ? v.filter((x) => !!x && typeof x === "object" && !Array.isArray(x)) : [];
+function clipText(text, n) {
+	const t = text.replace(/\s+/g, " ").trim();
+	return t.length > n ? `${t.slice(0, n - 1)}…` : t;
+}
+/** One line the agent says out loud when it hands its work over. */
+function summaryOf(id, res) {
+	const said = str(res.data?.ringkas);
+	if (said) return clipText(said, 110);
+	const fallback = str(res.data?.judul) || str(res.data?.konsep) || str(res.data?.angle) || res.raw || "";
+	return fallback ? clipText(fallback, 110) : `${ROLE[id]} selesai.`;
+}
+/** Plain-text rendering of one agent's work: context for the next agent and the markdown export. */
+function toText(id, res) {
+	const d = res.data;
+	if (!d) return res.raw ?? "";
+	const lines = [];
+	const add = (label, value) => value && lines.push(`${label}: ${value}`);
+	if (id === "raka") {
+		add("Audiens", str(d.audiens));
+		add("Tren", list(d.tren).join("; "));
+		add("Angle", str(d.angle));
+		add("Ide", list(d.ide).join(" | "));
+		add("Hashtag", list(d.hashtag).map((h) => `#${h.replace(/^#/, "")}`).join(" "));
+		add("Waktu posting", str(d.waktu_posting));
+	} else if (id === "sari") {
+		add("Judul", str(d.judul));
+		add("Hook", str(d.hook));
+		add("Cerita", str(d.cerita));
+		add("Caption", str(d.caption));
+		add("CTA", str(d.cta));
+	} else if (id === "dimas") {
+		add("Konsep", str(d.konsep));
+		add("Palet", list(d.palet).join(", "));
+		objs(d.shots).forEach((s, i) => add(`Shot ${i + 1}`, `${str(s.judul)} — ${str(s.arahan)}`));
+	} else if (id === "nia") {
+		add("Judul", str(d.judul));
+		add("Durasi", str(d.durasi));
+		add("Musik", str(d.musik));
+		objs(d.scenes).forEach((s, i) => add(`Scene ${i + 1} (${str(s.waktu)})`, `${str(s.visual)} | Narasi: ${str(s.narasi)} | Teks: ${str(s.teks_layar)}`));
+	} else {
+		add("Skor", str(d.skor));
+		add("Siap publish", d.siap_publish === true ? "ya" : "belum");
+		add("Kekuatan", list(d.kekuatan).join("; "));
+		add("Perbaikan", list(d.perbaikan).join("; "));
+		add("Catatan", str(d.catatan));
+	}
+	return lines.join("\n");
+}
+function buildContext(done, perAgent = 800, total = 3400) {
+	const parts = [];
+	for (const id of Object.keys(done)) {
+		const res = done[id];
+		if (!res || res.status !== "done") continue;
+		parts.push(`[${ROLE[id]}]\n${clipText(toText(id, res), perAgent)}`);
+	}
+	return parts.join("\n\n").slice(0, total);
+}
+function toMarkdown(brief, results) {
+	const out = [
+		`# Paket konten`,
+		``,
+		`**Brief:** ${brief}`,
+		``
+	];
+	for (const id of [
+		"raka",
+		"sari",
+		"dimas",
+		"nia",
+		"hermes"
+	]) {
+		const res = results[id];
+		if (!res || res.status !== "done") continue;
+		out.push(`## ${ROLE[id]}`, ``, toText(id, res).replace(/^(.+?): /gm, "**$1:** "), ``);
+	}
+	return out.join("\n");
+}
+async function callAgent(agent, brief, context, onWait, fetcher = fetch) {
+	for (let attempt = 0; attempt < 4; attempt += 1) {
+		let res;
+		try {
+			res = await fetcher("/api/agent", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({
+					agent,
+					brief,
+					context
+				})
+			});
+		} catch {
+			throw new AiError("network", "Tidak bisa terhubung ke server. Periksa koneksi internet.");
+		}
+		const body = await res.json().catch(() => null);
+		if (res.status === 429) {
+			const wait = Math.min(Math.max(Math.ceil(Number(body?.retryAfter) || 12), 3), 30);
+			onWait?.(wait);
+			await sleep((wait + 1) * 1e3);
+			continue;
+		}
+		if (!res.ok || !body?.text) throw new AiError(body?.error ?? "unknown", body?.message ?? `Server membalas HTTP ${res.status}.`);
+		return body.text;
+	}
+	throw new AiError("rate_limited", "Kuota gratis sedang penuh. Coba kirim brief lagi sebentar lagi.");
+}
+/** Runs the plan one agent at a time: the free tiers are rate limited, so no parallel calls. */
+async function runPipeline(plan, brief, cb, fetcher) {
+	const order = plan.groups.flat();
+	const done = {};
+	for (let i = 0; i < order.length; i += 1) {
+		const id = order[i];
+		const next = order[i + 1];
+		cb.onStart(id);
+		try {
+			const raw = await callAgent(id, brief, buildContext(done), (s) => cb.onWait(id, s), fetcher);
+			const data = parseJson(raw);
+			const result = {
+				status: "done",
+				...data ? { data } : {},
+				raw
+			};
+			done[id] = result;
+			cb.onDone(id, result, next);
+		} catch (error) {
+			const err = error instanceof AiError ? error : new AiError("unknown", "Terjadi kesalahan tak terduga.");
+			cb.onError(id, err.message);
+			if (err.code === "no_key" || err.code === "bad_key" || err.code === "network") break;
+		}
+	}
+	cb.onFinish();
+}
+var POLL = "https://image.pollinations.ai/prompt";
+function imageUrl(prompt, seed, size = 768) {
+	const q = new URLSearchParams({
+		width: String(size),
+		height: String(size),
+		model: "flux",
+		nologo: "true",
+		seed: String(seed)
+	});
+	return `${POLL}/${encodeURIComponent(prompt.slice(0, 600))}?${q.toString()}`;
+}
 var useOffice = create(() => ({
 	mode: "orbit",
 	paused: false,
@@ -1023,7 +1210,11 @@ var useOffice = create(() => ({
 	selected: null,
 	intro: true,
 	feed: false,
-	tick: 0
+	tick: 0,
+	results: {},
+	resultsBrief: "",
+	running: false,
+	panel: false
 }));
 function bump() {
 	useOffice.setState((s) => ({ tick: s.tick + 1 }));
@@ -1058,27 +1249,559 @@ function dismissIntro() {
 function toggleFeed() {
 	useOffice.setState((s) => ({ feed: !s.feed }));
 }
+function setPanel(open) {
+	useOffice.setState({ panel: open });
+}
+var runId = 0;
+function patchResult(id, result, token) {
+	if (token !== runId) return;
+	useOffice.setState((s) => ({
+		results: {
+			...s.results,
+			[id]: result
+		},
+		tick: s.tick + 1
+	}));
+}
 function submitBrief(text) {
 	const clean = text.trim();
 	if (!clean) return;
-	assignBrief(clean);
+	const { plan, brief } = assignBrief(clean);
 	try {
-		const next = [clean, ...JSON.parse(localStorage.getItem("atrium-briefs-v2") || "[]").filter((item) => item !== clean)].slice(0, 6);
-		localStorage.setItem("atrium-briefs-v2", JSON.stringify(next));
+		const next = [clean, ...JSON.parse(localStorage.getItem("atrium-briefs") || "[]").filter((item) => item !== clean)].slice(0, 6);
+		localStorage.setItem("atrium-briefs", JSON.stringify(next));
 	} catch {}
 	sim.selected = "hermes";
 	sim.focus = "hermes";
+	const token = runId += 1;
 	useOffice.setState((s) => ({
 		selected: "hermes",
 		intro: false,
-		tick: s.tick + 1
+		tick: s.tick + 1,
+		results: {},
+		resultsBrief: plan.standup ? "" : brief,
+		running: !plan.standup,
+		panel: !plan.standup
 	}));
+	if (plan.standup) return;
+	runPipeline(plan, brief, {
+		onStart: (id) => {
+			patchResult(id, { status: "working" }, token);
+			agentWorking(id, `${PROFILES[id].short} mulai mengerjakan bagiannya.`);
+		},
+		onWait: (id, seconds) => {
+			patchResult(id, {
+				status: "working",
+				waiting: seconds
+			}, token);
+			agentWorking(id, `Kuota gratis sedang penuh. Aku tunggu ${seconds} detik.`);
+		},
+		onDone: (id, result, next) => {
+			patchResult(id, result, token);
+			agentDelivers(id, summaryOf(id, result), next);
+		},
+		onError: (id, message) => {
+			patchResult(id, {
+				status: "error",
+				error: message
+			}, token);
+			agentFailed(id, clipText(`Gagal: ${message}`, 110));
+		},
+		onFinish: () => {
+			if (token === runId) useOffice.setState((s) => ({
+				running: false,
+				tick: s.tick + 1
+			}));
+		}
+	});
+}
+var ORDER = [
+	"raka",
+	"sari",
+	"dimas",
+	"nia",
+	"hermes"
+];
+/**
+* Pollinations' anonymous tier allows roughly one image every 15 seconds, so every
+* picture in the page waits its turn in one shared queue and retries on failure.
+*/
+var chain = Promise.resolve();
+function probe(url) {
+	return new Promise((resolve) => {
+		const img = new Image();
+		const timer = setTimeout(() => resolve(false), 7e4);
+		img.onload = () => {
+			clearTimeout(timer);
+			resolve(true);
+		};
+		img.onerror = () => {
+			clearTimeout(timer);
+			resolve(false);
+		};
+		img.src = url;
+	});
+}
+function queueImage(url) {
+	const job = chain.then(async () => {
+		for (let attempt = 0; attempt < 3; attempt += 1) {
+			if (await probe(url)) {
+				await sleep(3e3);
+				return true;
+			}
+			await sleep(16e3);
+		}
+		return false;
+	});
+	chain = job.catch(() => void 0);
+	return job;
+}
+function useQueuedImage(prompt, seed, enabled) {
+	const url = (0, import_react.useMemo)(() => imageUrl(prompt, seed), [prompt, seed]);
+	const [state, setState] = (0, import_react.useState)("idle");
+	(0, import_react.useEffect)(() => {
+		if (!enabled || !prompt) return;
+		let alive = true;
+		setState("loading");
+		queueImage(url).then((ok) => {
+			if (alive) setState(ok ? "ready" : "failed");
+		});
+		return () => {
+			alive = false;
+		};
+	}, [
+		url,
+		prompt,
+		enabled
+	]);
+	return {
+		url,
+		state
+	};
+}
+function AiImage({ prompt, seed, enabled = true, caption }) {
+	const { url, state } = useQueuedImage(prompt, seed, enabled);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("figure", {
+		className: "shot-img",
+		children: state === "ready" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+			src: url,
+			alt: caption,
+			loading: "lazy"
+		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "shot-wait",
+			children: state === "failed" ? "Gambar gagal dimuat. Layanan gratis sedang padat." : state === "idle" ? "Menunggu giliran" : "Foto sedang dibuat atau antre…"
+		})
+	});
+}
+function Chips({ items, hash }) {
+	if (!items.length) return null;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: "res-chips",
+		children: items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: hash ? `#${item.replace(/^#/, "")}` : item }, item))
+	});
+}
+function Field({ label, value }) {
+	if (!value) return null;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "res-field",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: label }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", { children: value })]
+	});
+}
+function Bullets({ label, items }) {
+	if (!items.length) return null;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "res-field",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: label }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: item }, item)) }) })]
+	});
+}
+function Photo({ d }) {
+	const shots = objs(d.shots).slice(0, 3);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Konsep",
+			value: str(d.konsep)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Chips, { items: list(d.palet) }),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "shot-grid",
+			children: shots.map((shot, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "shot",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AiImage, {
+						prompt: str(shot.prompt_en),
+						seed: 101 + i,
+						caption: str(shot.judul)
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { children: str(shot.judul) }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: str(shot.arahan) })
+				]
+			}, `${str(shot.judul)}-${i}`))
+		})
+	] });
+}
+function sceneSeconds(narasi) {
+	const words = narasi.split(/\s+/).filter(Boolean).length;
+	return Math.max(4, Math.min(9, Math.round(words * .45) + 2));
+}
+function Player({ scenes, onClose }) {
+	const [i, setI] = (0, import_react.useState)(0);
+	const [playing, setPlaying] = (0, import_react.useState)(false);
+	const [voice, setVoice] = (0, import_react.useState)(true);
+	const timer = (0, import_react.useRef)(null);
+	const scene = scenes[i];
+	const frames = scenes.map((s, n) => ({
+		prompt: str(s.prompt_en),
+		seed: 201 + n
+	}));
+	const current = useQueuedImage(frames[i]?.prompt ?? "", frames[i]?.seed ?? 0, true);
+	const rest = frames.slice(1).map((f) => ({ ...f }));
+	(0, import_react.useEffect)(() => () => window.speechSynthesis?.cancel(), []);
+	(0, import_react.useEffect)(() => {
+		if (!playing || !scene) return;
+		const narasi = str(scene.narasi);
+		if (voice && narasi && "speechSynthesis" in window) {
+			window.speechSynthesis.cancel();
+			const u = new SpeechSynthesisUtterance(narasi);
+			u.lang = "id-ID";
+			window.speechSynthesis.speak(u);
+		}
+		timer.current = setTimeout(() => {
+			if (i + 1 < scenes.length) setI(i + 1);
+			else setPlaying(false);
+		}, sceneSeconds(narasi) * 1e3);
+		return () => {
+			if (timer.current) clearTimeout(timer.current);
+		};
+	}, [
+		playing,
+		i,
+		scene,
+		scenes.length,
+		voice
+	]);
+	if (!scene) return null;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "player",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "player-stage",
+				children: [current.state === "ready" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+					className: "kb",
+					src: current.url,
+					alt: str(scene.visual),
+					style: { animationDuration: `${sceneSeconds(str(scene.narasi))}s` }
+				}, i) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "shot-wait",
+					children: current.state === "failed" ? "Frame gagal dimuat." : "Frame sedang dibuat atau antre…"
+				}), str(scene.teks_layar) ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "player-caption",
+					children: str(scene.teks_layar)
+				}) : null]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+				className: "player-line",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+						"Scene ",
+						i + 1,
+						"/",
+						scenes.length,
+						" · ",
+						str(scene.waktu)
+					] }),
+					" ",
+					str(scene.narasi)
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "player-bar",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						type: "button",
+						className: "text-btn is-on",
+						onClick: () => setPlaying((p) => !p),
+						disabled: current.state !== "ready",
+						children: [playing ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Square, { size: 14 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Play, { size: 14 }), playing ? "Berhenti" : "Putar"]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "text-btn",
+						onClick: () => {
+							setPlaying(false);
+							setI((n) => Math.max(0, n - 1));
+						},
+						disabled: i === 0,
+						children: "Sebelumnya"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "text-btn",
+						onClick: () => {
+							setPlaying(false);
+							setI((n) => Math.min(scenes.length - 1, n + 1));
+						},
+						disabled: i === scenes.length - 1,
+						children: "Berikutnya"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+						className: "player-voice",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+							type: "checkbox",
+							checked: voice,
+							onChange: (e) => setVoice(e.target.checked)
+						}), " Suara narasi"]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "icon-btn",
+						onClick: onClose,
+						"aria-label": "Tutup pemutar",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, { size: 16 })
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "player-prefetch",
+				"aria-hidden": "true",
+				children: rest.map((f, n) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Prefetch, {
+					prompt: f.prompt,
+					seed: f.seed,
+					active: n + 1 > i
+				}, f.seed))
+			})
+		]
+	});
+}
+function Prefetch({ prompt, seed, active }) {
+	useQueuedImage(prompt, seed, active);
+	return null;
+}
+function Video({ d }) {
+	const scenes = objs(d.scenes).slice(0, 4);
+	const [open, setOpen] = (0, import_react.useState)(false);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Judul",
+			value: str(d.judul)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Durasi",
+			value: str(d.durasi)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Musik",
+			value: str(d.musik)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", {
+			className: "scenes",
+			children: scenes.map((s, n) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: str(s.waktu) }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: str(s.visual) }),
+				str(s.narasi) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					className: "muted",
+					children: ["Narasi: ", str(s.narasi)]
+				}) : null,
+				str(s.teks_layar) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					className: "muted",
+					children: ["Teks layar: ", str(s.teks_layar)]
+				}) : null
+			] }, `${str(s.waktu)}-${n}`))
+		}),
+		open ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Player, {
+			scenes,
+			onClose: () => setOpen(false)
+		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+			type: "button",
+			className: "text-btn",
+			onClick: () => setOpen(true),
+			disabled: !scenes.length,
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Film, { size: 16 }), "Buat pratinjau video"]
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			className: "muted small",
+			children: "Pratinjau memutar frame gambar AI dengan teks dan suara narasi di browser. Ini bukan file video."
+		})
+	] });
+}
+function Body$1({ id, res }) {
+	const d = res.data;
+	if (!d || !toText(id, res).trim()) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+		className: "res-raw",
+		children: res.raw
+	});
+	if (id === "raka") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Audiens",
+			value: str(d.audiens)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Bullets, {
+			label: "Tren",
+			items: list(d.tren)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Angle",
+			value: str(d.angle)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Bullets, {
+			label: "Ide konten",
+			items: list(d.ide)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Chips, {
+			items: list(d.hashtag),
+			hash: true
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Waktu posting",
+			value: str(d.waktu_posting)
+		})
+	] });
+	if (id === "sari") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", {
+			className: "story-title",
+			children: str(d.judul)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Hook",
+			value: str(d.hook)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			className: "story",
+			children: str(d.cerita)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Caption",
+			value: str(d.caption)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "CTA",
+			value: str(d.cta)
+		})
+	] });
+	if (id === "dimas") return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Photo, { d });
+	if (id === "nia") return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Video, { d });
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Skor",
+			value: str(d.skor) ? `${str(d.skor)} / 10` : ""
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Siap publish",
+			value: d.siap_publish === true ? "Ya" : "Belum"
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Bullets, {
+			label: "Kekuatan",
+			items: list(d.kekuatan)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Bullets, {
+			label: "Perbaikan",
+			items: list(d.perbaikan)
+		}),
+		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+			label: "Catatan",
+			value: str(d.catatan)
+		})
+	] });
+}
+function statusLabel(res) {
+	if (res.status === "done") return "Selesai";
+	if (res.status === "error") return "Gagal";
+	return res.waiting ? `Menunggu kuota ${res.waiting} dtk` : "Bekerja…";
+}
+function download(brief, results) {
+	const blob = new Blob([toMarkdown(brief, results)], { type: "text/markdown;charset=utf-8" });
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = "paket-konten.md";
+	a.click();
+	URL.revokeObjectURL(url);
+}
+function ResultsPanel() {
+	const results = useOffice((s) => s.results);
+	const brief = useOffice((s) => s.resultsBrief);
+	const running = useOffice((s) => s.running);
+	const [tab, setTab] = (0, import_react.useState)("raka");
+	const present = ORDER.filter((id) => results[id]);
+	const active = results[tab] ? tab : present[present.length - 1] ?? tab;
+	const res = results[active];
+	const anyDone = present.some((id) => results[id]?.status === "done");
+	(0, import_react.useEffect)(() => {
+		const working = ORDER.find((id) => results[id]?.status === "working");
+		if (working) setTab(working);
+	}, [results]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+		className: "results hit",
+		"aria-label": "Hasil kerja tim",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "sheet-head",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "brand-kicker",
+					children: running ? "Tim sedang bekerja dengan AI" : "Hasil kerja AI"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { children: brief || "Hasil kerja" })] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "res-actions",
+					children: [anyDone ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						type: "button",
+						className: "text-btn",
+						onClick: () => download(brief, results),
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Download, { size: 16 }), "Unduh .md"]
+					}) : null, /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "icon-btn",
+						onClick: () => setPanel(false),
+						"aria-label": "Tutup hasil kerja",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, { size: 18 })
+					})]
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "res-tabs",
+				role: "tablist",
+				children: ORDER.filter((id) => present.includes(id)).map((id) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+					type: "button",
+					role: "tab",
+					"aria-selected": active === id,
+					className: active === id ? `res-tab is-on who-${id}` : "res-tab",
+					onClick: () => setTab(id),
+					children: [PROFILES[id].team, /* @__PURE__ */ (0, import_jsx_runtime.jsx)("small", { children: statusLabel(results[id]) })]
+				}, id))
+			}),
+			res ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "res-body",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+						className: "role",
+						children: [
+							PROFILES[active].name,
+							" · ",
+							PROFILES[active].role
+						]
+					}),
+					res.status === "working" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "muted",
+						children: res.waiting ? `Kuota gratis penuh, mencoba lagi dalam ${res.waiting} detik…` : "Sedang menulis. Biasanya beberapa detik."
+					}) : null,
+					res.status === "error" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "res-error",
+						children: res.error
+					}) : null,
+					res.status === "done" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Body$1, {
+						id: active,
+						res
+					}) : null
+				]
+			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				className: "muted",
+				children: "Belum ada hasil."
+			})
+		]
+	});
 }
 var labelNodes = /* @__PURE__ */ new Map();
 var SAMPLES = [
 	"Kampanye 7 hari untuk peluncuran kopi susu baru",
-	"Naskah Reels 30 detik tentang tips hemat bulanan",
-	"Carousel 8 slide: 5 kesalahan pemula investasi",
+	"Cerita pendek tentang pemilik warung kopi yang pantang menyerah",
+	"Foto produk 5 gaya untuk toko sepatu lokal",
 	"Standup: status konten minggu ini"
 ];
 var STATE_LABEL = {
@@ -1118,6 +1841,9 @@ function Hud() {
 	const selected = useOffice((s) => s.selected);
 	const intro = useOffice((s) => s.intro);
 	const feed = useOffice((s) => s.feed);
+	const panel = useOffice((s) => s.panel);
+	const running = useOffice((s) => s.running);
+	const hasResults = useOffice((s) => Object.keys(s.results).length > 0);
 	useOffice((s) => s.tick);
 	const [brief, setBrief] = (0, import_react.useState)("");
 	const [saved, setSaved] = (0, import_react.useState)([]);
@@ -1186,6 +1912,13 @@ function Hud() {
 								onClick: () => setMode("walk"),
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Footprints, { size: 16 }), "Jalan"]
 							}),
+							hasResults ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: panel ? "text-btn is-on" : "text-btn",
+								onClick: () => setPanel(!panel),
+								"aria-expanded": panel,
+								children: running ? "Hasil (berjalan)" : "Hasil kerja"
+							}) : null,
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 								type: "button",
 								className: "text-btn",
@@ -1208,7 +1941,7 @@ function Hud() {
 								children: "Studio yang bisa dilihat"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { children: "Lima orang, enam ruangan." }),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "Strategi, Naskah, Visual, Video, dan Direktur Kreatif bekerja di studionya masing-masing, lalu menyerahkan hasil satu ke satu lewat gelembung. Kamu bisa keliling atau kirim brief — Hermes yang membagi dan menjaga alurnya." }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "Ide, Cerita, Foto, Video, dan Direktur Kreatif bekerja di studionya masing-masing, lalu menyerahkan hasil satu ke satu lewat gelembung. Kamu bisa keliling atau kirim brief — Hermes yang membagi dan menjaga alurnya." }),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 								className: "intro-actions",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
@@ -1253,7 +1986,8 @@ function Hud() {
 						className: "map-dock hit",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MiniMap, {})
 					}),
-					selected ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dossier, { id: selected }) : null,
+					panel ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ResultsPanel, {}) : null,
+					selected && !panel ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dossier, { id: selected }) : null,
 					mode === "walk" ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Stick, {}) : null,
 					mode === "orbit" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "zoom hit",
@@ -1310,7 +2044,7 @@ function Hud() {
 								id: "brief",
 								value: brief,
 								onChange: (event) => setBrief(event.target.value),
-								placeholder: "Tulis brief konten, misalnya carousel 8 slide tips hemat",
+								placeholder: "Tulis brief, misalnya: cerita pendek + foto + video tentang kopi susu baru",
 								maxLength: 180
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
@@ -1379,7 +2113,7 @@ function Dossier({ id }) {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: profile.focus.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: item }, item)) }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "note",
-				children: "Percakapan dan hasil kerja ini masih skenario di Atrium, belum dibuat oleh AI sungguhan."
+				children: "Saat kamu mengirim brief, hasil kerja agen ditulis oleh AI sungguhan (model gratis di Groq). Obrolan santai antar karakter saat tidak ada brief masih skenario."
 			})
 		]
 	});

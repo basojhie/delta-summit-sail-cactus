@@ -97,6 +97,73 @@ var Clock3 = createLucideIcon("clock-3", [["circle", {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var Download = createLucideIcon("download", [
+	["path", {
+		d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4",
+		key: "ih7n3h"
+	}],
+	["polyline", {
+		points: "7 10 12 15 17 10",
+		key: "2ggqvy"
+	}],
+	["line", {
+		x1: "12",
+		x2: "12",
+		y1: "15",
+		y2: "3",
+		key: "1vk2je"
+	}]
+]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var Film = createLucideIcon("film", [
+	["rect", {
+		width: "18",
+		height: "18",
+		x: "3",
+		y: "3",
+		rx: "2",
+		key: "afitv7"
+	}],
+	["path", {
+		d: "M7 3v18",
+		key: "bbkbws"
+	}],
+	["path", {
+		d: "M3 7.5h4",
+		key: "zfgn84"
+	}],
+	["path", {
+		d: "M3 12h18",
+		key: "1i2n21"
+	}],
+	["path", {
+		d: "M3 16.5h4",
+		key: "1230mu"
+	}],
+	["path", {
+		d: "M17 3v18",
+		key: "in4fa5"
+	}],
+	["path", {
+		d: "M17 7.5h4",
+		key: "myr1c1"
+	}],
+	["path", {
+		d: "M17 16.5h4",
+		key: "go4c1d"
+	}]
+]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var Footprints = createLucideIcon("footprints", [
 	["path", {
 		d: "M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z",
@@ -178,6 +245,20 @@ var Send = createLucideIcon("send", [["path", {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var Square = createLucideIcon("square", [["rect", {
+	width: "18",
+	height: "18",
+	x: "3",
+	y: "3",
+	rx: "2",
+	key: "afitv7"
+}]]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var TriangleAlert = createLucideIcon("triangle-alert", [
 	["path", {
 		d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
@@ -206,4 +287,4 @@ var X = createLucideIcon("x", [["path", {
 	key: "d8bk6v"
 }]]);
 //#endregion
-export { Pause as a, Clock3 as c, Play as i, TriangleAlert as n, Gauge as o, Send as r, Footprints as s, X as t };
+export { Play as a, Footprints as c, Clock3 as d, Send as i, Film as l, TriangleAlert as n, Pause as o, Square as r, Gauge as s, X as t, Download as u };

@@ -9,8 +9,8 @@ const CAMPAIGN = /kampanye|campaign|peluncuran|launch|paket konten|konten minggu
 
 const SKILLS: Record<WorkerId, RegExp> = {
   raka: /riset|tren|trend|audiens|kompetitor|pesaing|kalender|strategi|analitik|analisis|\bseo\b|hashtag|angle|target pasar/,
-  sari: /caption|naskah|script|skrip|hook|headline|judul|thread|artikel|newsletter|copy|tulis|blog|voiceover teks/,
-  dimas: /desain|visual|carousel|karusel|thumbnail|poster|logo|warna|infografis|feed|banner|slide/,
+  sari: /cerita|kisah|story|storytelling|narasi|fiksi|dongeng|caption|naskah|script|skrip|hook|headline|judul|thread|artikel|newsletter|copy|tulis|blog|voiceover teks/,
+  dimas: /foto|fotografi|photo|photoshoot|moodboard|shot list|portrait|potret|desain|visual|carousel|karusel|thumbnail|poster|logo|warna|infografis|feed|banner|slide/,
   nia: /video|reels|reel|tiktok|shorts|storyboard|subtitle|voiceover|musik|edit|motion|youtube/,
 };
 
@@ -53,8 +53,8 @@ export function clip(text: string, n = 78) {
 export function taskLine(id: AgentId, text: string) {
   const bit = clip(text, 72);
   if (id === "raka") return `Strategi: aku riset angle dulu — ${bit}`;
-  if (id === "sari") return `Naskah: aku tulis hook dan caption — ${bit}`;
-  if (id === "dimas") return `Visual: aku buat konsep dan layout — ${bit}`;
+  if (id === "sari") return `Cerita: aku tulis alur, hook, dan caption — ${bit}`;
+  if (id === "dimas") return `Foto: aku susun konsep, moodboard, dan shot list — ${bit}`;
   if (id === "nia") return `Video: aku susun storyboard-nya — ${bit}`;
   return bit;
 }
@@ -62,14 +62,14 @@ export function taskLine(id: AgentId, text: string) {
 export function deliverLine(id: AgentId, text: string) {
   const bit = clip(text, 56);
   if (id === "raka") return `Riset selesai: audiens, tren, dan angle untuk “${bit}”.`;
-  if (id === "sari") return `Naskah dan caption untuk “${bit}” siap.`;
-  if (id === "dimas") return `Konsep visual dan layout untuk “${bit}” siap.`;
+  if (id === "sari") return `Cerita dan caption untuk “${bit}” siap.`;
+  if (id === "dimas") return `Konsep foto, moodboard, dan shot list untuk “${bit}” siap.`;
   if (id === "nia") return `Storyboard dan alur video untuk “${bit}” siap.`;
   return `Review selesai. Paket konten “${bit}” siap publish.`;
 }
 
 export function handoffLine(from: AgentId, toShort: string) {
   if (from === "raka") return `Aku bawa hasil riset ke ${toShort}.`;
-  if (from === "sari") return `Naskahnya aku antar ke ${toShort}.`;
+  if (from === "sari") return `Ceritanya aku antar ke ${toShort}.`;
   return `Draf-nya aku serahkan ke ${toShort} untuk review.`;
 }

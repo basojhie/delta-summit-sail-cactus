@@ -3,8 +3,8 @@ import { f as require_jsx_runtime, p as require_react } from "../_libs/@react-th
 import { n as TriangleAlert } from "../_libs/lucide-react.mjs";
 import { _ as createFileRoute, d as Scripts, f as HeadContent, g as lazyRouteComponent, h as Outlet, m as createRouter, v as createRootRoute, y as useRouter } from "../_libs/@tanstack/react-router+[...].mjs";
 import { a as union, i as string, n as number, r as object, t as literal } from "../_libs/zod.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-BXN0gwzR.js
-var router_BXN0gwzR_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
+//#region node_modules/.nitro/vite/services/ssr/assets/router-XATcHLq6.js
+var router_XATcHLq6_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var FALLBACK_MESSAGE = "An unexpected error occurred. Try reloading the page.";
@@ -332,9 +332,9 @@ function PreviewHostBridge() {
 	}, [router]);
 	return null;
 }
-var styles_default = "/assets/styles-DWudYSYB.css";
+var styles_default = "/assets/styles-K2ohoVR-.css";
 var APP_NAME = "Atrium";
-var Route$1 = createRootRoute({
+var Route$2 = createRootRoute({
 	head: () => ({
 		meta: [
 			{ charSet: "utf-8" },
@@ -345,7 +345,7 @@ var Route$1 = createRootRoute({
 			{ title: APP_NAME },
 			{
 				name: "description",
-				content: "Studio 3D untuk lima agen tim kreatif konten: Strategi, Naskah, Visual, Video, dan Creative Director."
+				content: "Studio 3D untuk lima agen tim kreatif konten: Ide, Cerita, Foto, Video, dan Creative Director."
 			},
 			{
 				name: "theme-color",
@@ -395,13 +395,212 @@ var Route$1 = createRootRoute({
 		] })]
 	})
 });
-var $$splitComponentImporter = () => import("./routes-CgfA3IqR.mjs");
-var rootRouteChildren = { IndexRoute: createFileRoute("/")({ component: lazyRouteComponent($$splitComponentImporter, "component") }).update({
-	id: "/",
-	path: "/",
-	getParentRoute: () => Route$1
-}) };
-var routeTree = Route$1._addFileChildren(rootRouteChildren)._addFileTypes();
+var $$splitComponentImporter = () => import("./routes-C4SABvbJ.mjs");
+var Route$1 = createFileRoute("/")({ component: lazyRouteComponent($$splitComponentImporter, "component") });
+var AI_AGENT_IDS = [
+	"raka",
+	"sari",
+	"dimas",
+	"nia",
+	"hermes"
+];
+var BASE = "Kamu anggota tim konten kreatif berbahasa Indonesia. Balas HANYA dengan satu objek JSON valid, tanpa markdown dan tanpa teks lain. Tulis dalam bahasa Indonesia, kecuali kolom yang namanya berakhiran _en (bahasa Inggris). Konkret, singkat, dan siap pakai. Jangan mengarang fakta, angka statistik, atau nama merek yang tidak ada di brief. Kolom \"ringkas\" wajib ada: satu kalimat maksimal 90 karakter, kamu ucapkan ke rekan satu tim.";
+var AGENT_SETUP = {
+	raka: {
+		maxTokens: 800,
+		system: `${BASE}\n\nPeranmu: Raka, strategis dan periset konten. Dari brief, tentukan arah konten.\nSkema JSON: {"ringkas": string, "audiens": string, "tren": [3 string], "angle": string, "ide": [3 string, masing-masing judul + satu kalimat], "hashtag": [6 string tanpa #], "waktu_posting": string}`
+	},
+	sari: {
+		maxTokens: 1100,
+		system: `${BASE}\n\nPeranmu: Sari, storyteller dan penulis naskah. Tulis cerita atau naskah utuh yang enak dibaca/didengar, dengan pembuka yang kuat, alur jelas, dan penutup. Panjang cerita 120 sampai 220 kata. Ikuti angle dari Raka jika ada.
+Skema JSON: {"ringkas": string, "judul": string, "hook": string, "cerita": string, "caption": string, "cta": string}`
+	},
+	dimas: {
+		maxTokens: 1e3,
+		system: `${BASE}\n\nPeranmu: Dimas, fotografer dan kreator visual. Susun konsep sesi foto yang bisa langsung dieksekusi dan tepat 3 shot.\nKolom prompt_en adalah prompt gambar bahasa Inggris, 25 sampai 45 kata: subjek, suasana, cahaya, komposisi, gaya foto. Jangan menaruh teks, logo, atau orang terkenal di dalam gambar.
+Skema JSON: {"ringkas": string, "konsep": string, "palet": [4 string nama warna], "shots": [{"judul": string, "arahan": string, "prompt_en": string}]}`
+	},
+	nia: {
+		maxTokens: 1100,
+		system: `${BASE}\n\nPeranmu: Nia, produser video pendek (Reels/TikTok/Shorts). Susun storyboard tepat 4 scene yang total 20 sampai 40 detik.\nScene pertama harus hook dalam 3 detik. Kolom narasi dibacakan sebagai voiceover, maksimal 20 kata per scene. Kolom prompt_en adalah prompt gambar bahasa Inggris, 25 sampai 45 kata, untuk frame scene itu. Tanpa teks atau logo di gambar.
+Skema JSON: {"ringkas": string, "judul": string, "durasi": string, "musik": string, "scenes": [{"waktu": string, "visual": string, "narasi": string, "teks_layar": string, "prompt_en": string}]}`
+	},
+	hermes: {
+		maxTokens: 700,
+		system: `${BASE}\n\nPeranmu: Hermes, Creative Director. Review hasil kerja tim terhadap brief secara jujur. Beri skor 1 sampai 10, jangan menggelembungkan nilai. Sebut kekuatan nyata dan perbaikan yang spesifik.
+Skema JSON: {"ringkas": string, "skor": number, "siap_publish": boolean, "kekuatan": [2 sampai 3 string], "perbaikan": [2 sampai 3 string], "catatan": string}`
+	}
+};
+var MAX_CONTEXT = 3600;
+function validateAgentRequest(body) {
+	if (!body || typeof body !== "object") return {
+		ok: false,
+		message: "Body harus berupa objek JSON."
+	};
+	const { agent, brief, context } = body;
+	if (typeof agent !== "string" || !AI_AGENT_IDS.includes(agent)) return {
+		ok: false,
+		message: "Agen tidak dikenal."
+	};
+	if (typeof brief !== "string" || !brief.trim()) return {
+		ok: false,
+		message: "Brief kosong."
+	};
+	const ctx = typeof context === "string" ? context : "";
+	return {
+		ok: true,
+		value: {
+			agent,
+			brief: brief.trim().slice(0, 400),
+			context: ctx.slice(0, MAX_CONTEXT)
+		}
+	};
+}
+function userPrompt(req) {
+	const ctx = req.context.trim();
+	return ctx ? `Brief dari klien:\n${req.brief}\n\nHasil kerja rekan tim sejauh ini:\n${ctx}\n\nKerjakan bagianmu sekarang. Balas JSON saja.` : `Brief dari klien:\n${req.brief}\n\nKerjakan bagianmu sekarang. Balas JSON saja.`;
+}
+var hits = /* @__PURE__ */ new Map();
+/** Sliding-window limiter. Best effort only: each serverless instance keeps its own memory. */
+function hitRateLimit(key, now = Date.now(), limit = 14, windowMs = 6e4) {
+	const recent = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
+	if (recent.length >= limit) {
+		hits.set(key, recent);
+		return true;
+	}
+	recent.push(now);
+	hits.set(key, recent);
+	if (hits.size > 500) {
+		for (const [k, v] of hits) if (!v.some((t) => now - t < windowMs)) hits.delete(k);
+	}
+	return false;
+}
+var GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+var DEFAULT_MODEL = "openai/gpt-oss-120b";
+function json(body, status = 200, extra = {}) {
+	return new Response(JSON.stringify(body), {
+		status,
+		headers: {
+			"content-type": "application/json; charset=utf-8",
+			"cache-control": "no-store",
+			...extra
+		}
+	});
+}
+async function callGroq(url, key, body) {
+	return fetch(url, {
+		method: "POST",
+		headers: {
+			"content-type": "application/json",
+			authorization: `Bearer ${key}`
+		},
+		body: JSON.stringify(body),
+		signal: AbortSignal.timeout(45e3)
+	});
+}
+var Route = createFileRoute("/api/agent")({ server: { handlers: { POST: async ({ request }) => {
+	const { env } = await import("./env.server-DRkkE6Ij.mjs");
+	const origin = request.headers.get("origin");
+	if (origin) {
+		let host = "";
+		try {
+			host = new URL(origin).host;
+		} catch {}
+		if (host !== new URL(request.url).host) return json({
+			error: "forbidden",
+			message: "Origin tidak diizinkan."
+		}, 403);
+	}
+	if (hitRateLimit((request.headers.get("x-forwarded-for") ?? "").split(",")[0]?.trim() || "anon")) return json({
+		error: "rate_limited",
+		message: "Terlalu banyak permintaan. Tunggu sebentar.",
+		retryAfter: 12
+	}, 429);
+	const key = env("GROQ_API_KEY");
+	if (!key) return json({
+		error: "no_key",
+		message: "GROQ_API_KEY belum dipasang di Vercel (Settings → Environment Variables)."
+	}, 503);
+	let raw;
+	try {
+		raw = await request.json();
+	} catch {
+		return json({
+			error: "bad_request",
+			message: "JSON tidak valid."
+		}, 400);
+	}
+	const parsed = validateAgentRequest(raw);
+	if (!parsed.ok) return json({
+		error: "bad_request",
+		message: parsed.message
+	}, 400);
+	const { agent } = parsed.value;
+	const setup = AGENT_SETUP[agent];
+	const model = env("GROQ_MODEL") ?? DEFAULT_MODEL;
+	const url = env("GROQ_API_URL") ?? GROQ_URL;
+	const payload = {
+		model,
+		temperature: .8,
+		max_completion_tokens: setup.maxTokens,
+		messages: [{
+			role: "system",
+			content: setup.system
+		}, {
+			role: "user",
+			content: userPrompt(parsed.value)
+		}],
+		response_format: { type: "json_object" }
+	};
+	if (/gpt-oss/i.test(model)) payload.reasoning_effort = "low";
+	try {
+		let res = await callGroq(url, key, payload);
+		if (res.status === 400) {
+			delete payload.response_format;
+			res = await callGroq(url, key, payload);
+		}
+		if (res.status === 429) return json({
+			error: "rate_limited",
+			message: "Kuota gratis Groq sedang penuh.",
+			retryAfter: Number(res.headers.get("retry-after")) || 12
+		}, 429);
+		if (res.status === 401 || res.status === 403) return json({
+			error: "bad_key",
+			message: "GROQ_API_KEY ditolak Groq. Periksa kuncinya."
+		}, 502);
+		if (!res.ok) return json({
+			error: "upstream",
+			message: `Groq membalas HTTP ${res.status}.`
+		}, 502);
+		const text = (await res.json()).choices?.[0]?.message?.content?.trim();
+		if (!text) return json({
+			error: "empty",
+			message: "Groq membalas kosong."
+		}, 502);
+		return json({
+			text,
+			model
+		});
+	} catch {
+		return json({
+			error: "upstream",
+			message: "Tidak bisa menghubungi Groq (timeout)."
+		}, 504);
+	}
+} } } });
+var rootRouteChildren = {
+	IndexRoute: Route$1.update({
+		id: "/",
+		path: "/",
+		getParentRoute: () => Route$2
+	}),
+	ApiAgentRoute: Route.update({
+		id: "/api/agent",
+		path: "/api/agent",
+		getParentRoute: () => Route$2
+	})
+};
+var routeTree = Route$2._addFileChildren(rootRouteChildren)._addFileTypes();
 function getRouter() {
 	return createRouter({
 		routeTree,
@@ -410,4 +609,4 @@ function getRouter() {
 	});
 }
 //#endregion
-export { getRouter, router_BXN0gwzR_exports as t };
+export { getRouter, router_XATcHLq6_exports as t };

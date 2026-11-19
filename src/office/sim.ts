@@ -243,12 +243,34 @@ export function assignBrief(text: string) {
     say(a, line, false);
     go(a, MEET_SEATS[i]!, "meet");
   });
-  if (plan.standup) {
-    sim.pipe = null;
-    return;
-  }
-  sim.pipe = { groups: plan.groups, i: 0, t: STAGE_START, brief: clean };
+  // The real work is done by the AI pipeline (see ai.ts); the scripted pipe stays unused.
+  sim.pipe = null;
   sim.hold = Math.max(sim.hold, STAGE_START + STAGE_GAP);
+  return { plan, brief: clean };
+}
+
+/** An agent starts (or keeps) working on its part while the model call is running. */
+export function agentWorking(id: AgentId, line: string) {
+  const a = person(id);
+  a.lineOverride = line;
+  say(a, line, false);
+  sim.hold = Math.max(sim.hold, 40);
+}
+
+/** An agent announces real finished work and walks it over to the next agent. */
+export function agentDelivers(id: AgentId, line: string, next?: AgentId) {
+  const a = person(id);
+  say(a, line, true);
+  if (next) {
+    a.lineOverride = handoffLine(id, PROFILES[next].short);
+    go(a, DOORS[next], "visit");
+  }
+  sim.hold = Math.max(sim.hold, 40);
+}
+
+export function agentFailed(id: AgentId, line: string) {
+  const a = person(id);
+  say(a, line, true);
 }
 
 function stepPipe(dt: number) {

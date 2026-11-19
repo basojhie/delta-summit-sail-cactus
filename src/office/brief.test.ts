@@ -15,8 +15,8 @@ test("script brief routes to Sari then Nia, reviewed by Hermes", () => {
   assert.deepEqual(plan.groups, [["sari"], ["nia"], ["hermes"]]);
 });
 
-test("carousel brief routes to Dimas only", () => {
-  const plan = planBrief("Carousel 8 slide: 5 kesalahan pemula investasi");
+test("photo brief routes to Dimas only", () => {
+  const plan = planBrief("Foto produk 5 gaya untuk toko sepatu lokal");
   assert.deepEqual(plan.assignees, ["dimas"]);
   assert.deepEqual(plan.groups, [["dimas"], ["hermes"]]);
 });
@@ -35,6 +35,17 @@ test("unmatched brief falls back to the full pipeline", () => {
 test("research keywords route to Raka first", () => {
   const plan = planBrief("Riset tren dan kompetitor untuk akun fashion");
   assert.deepEqual(plan.groups[0], ["raka"]);
+});
+
+test("story brief routes to Sari, reviewed by Hermes", () => {
+  const plan = planBrief("Cerita pendek tentang pemilik warung kopi");
+  assert.deepEqual(plan.assignees, ["sari"]);
+  assert.deepEqual(plan.groups, [["sari"], ["hermes"]]);
+});
+
+test("photo plus video brief runs Dimas and Nia in parallel", () => {
+  const plan = planBrief("Foto dan video untuk peluncuran sepatu");
+  assert.deepEqual(plan.groups.at(-2), ["dimas", "nia"]);
 });
 
 test("clip shortens long text and keeps short text", () => {

@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Clock3, Footprints, Gauge, Pause, Play, Send, X } from "lucide-react";
 import { formatClock, sim, statusText } from "./sim";
-import { cycleSpeed, dismissIntro, selectAgent, setMode, submitBrief, toggleFeed, togglePause, useOffice } from "./store";
+import { cycleSpeed, dismissIntro, selectAgent, setMode, setPanel, submitBrief, toggleFeed, togglePause, useOffice } from "./store";
+import { ResultsPanel } from "./Results";
 import { AGENT_IDS, PROFILES, ROOMS, type AgentId } from "./world";
 import { labelNodes } from "./labels";
 
 const SAMPLES = [
   "Kampanye 7 hari untuk peluncuran kopi susu baru",
-  "Naskah Reels 30 detik tentang tips hemat bulanan",
-  "Carousel 8 slide: 5 kesalahan pemula investasi",
+  "Cerita pendek tentang pemilik warung kopi yang pantang menyerah",
+  "Foto produk 5 gaya untuk toko sepatu lokal",
   "Standup: status konten minggu ini",
 ];
 
@@ -54,6 +55,9 @@ export function Hud() {
   const selected = useOffice((s) => s.selected);
   const intro = useOffice((s) => s.intro);
   const feed = useOffice((s) => s.feed);
+  const panel = useOffice((s) => s.panel);
+  const running = useOffice((s) => s.running);
+  const hasResults = useOffice((s) => Object.keys(s.results).length > 0);
   useOffice((s) => s.tick);
   const [brief, setBrief] = useState("");
   const [saved, setSaved] = useState<string[]>([]);
@@ -96,6 +100,11 @@ export function Hud() {
             <Footprints size={16} />
             Jalan
           </button>
+          {hasResults ? (
+            <button type="button" className={panel ? "text-btn is-on" : "text-btn"} onClick={() => setPanel(!panel)} aria-expanded={panel}>
+              {running ? "Hasil (berjalan)" : "Hasil kerja"}
+            </button>
+          ) : null}
           <button type="button" className="text-btn" onClick={toggleFeed} aria-expanded={feed}>
             Aktivitas
           </button>
@@ -108,7 +117,7 @@ export function Hud() {
             <p className="brand-kicker">Studio yang bisa dilihat</p>
             <h2>Lima orang, enam ruangan.</h2>
             <p>
-              Strategi, Naskah, Visual, Video, dan Direktur Kreatif bekerja di studionya masing-masing, lalu
+              Ide, Cerita, Foto, Video, dan Direktur Kreatif bekerja di studionya masing-masing, lalu
               menyerahkan hasil satu ke satu lewat gelembung. Kamu bisa keliling atau kirim brief — Hermes yang
               membagi dan menjaga alurnya.
             </p>
@@ -148,7 +157,8 @@ export function Hud() {
           </div>
         )}
 
-        {selected ? <Dossier id={selected} /> : null}
+        {panel ? <ResultsPanel /> : null}
+        {selected && !panel ? <Dossier id={selected} /> : null}
 
         {mode === "walk" ? <Stick /> : null}
         {mode === "orbit" ? (
@@ -194,7 +204,7 @@ export function Hud() {
             id="brief"
             value={brief}
             onChange={(event) => setBrief(event.target.value)}
-            placeholder="Tulis brief konten, misalnya carousel 8 slide tips hemat"
+            placeholder="Tulis brief, misalnya: cerita pendek + foto + video tentang kopi susu baru"
             maxLength={180}
           />
           <button type="submit" className="icon-btn is-on" aria-label="Kirim brief">
@@ -255,7 +265,8 @@ function Dossier({ id }: { id: AgentId }) {
         ))}
       </ul>
       <p className="note">
-        Percakapan dan hasil kerja ini masih skenario di Atrium, belum dibuat oleh AI sungguhan.
+        Saat kamu mengirim brief, hasil kerja agen ditulis oleh AI sungguhan (model gratis di Groq). Obrolan santai antar karakter
+        saat tidak ada brief masih skenario.
       </p>
     </aside>
   );

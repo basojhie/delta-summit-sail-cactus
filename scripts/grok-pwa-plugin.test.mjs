@@ -21,6 +21,10 @@ import { renderInstallPage } from "./grok-pwa-plugin.mjs";
 
 const TEMPLATE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
+// Hermetic: head-injection tests must not pick up the app's own src/lib/og/site.json
+// (title/type/card), otherwise renaming the app breaks unrelated assertions.
+process.chdir(mkdtempSync(join(tmpdir(), "grok-pwa-test-")));
+
 test("injects before </head>", () => {
   const out = injectGrokPwaHead("<html><head><title>x</title></head><body></body></html>");
   assert.match(out, /rel="manifest"/);
