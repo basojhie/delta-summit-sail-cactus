@@ -1,0 +1,1740 @@
+From 127492a203e0bd41e134714cd310512d7f30f5e4 Mon Sep 17 00:00:00 2001
+From: Claude <claude@users.noreply.github.com>
+Date: Wed, 18 Nov 2026 21:49:29 +0000
+Subject: [PATCH] Agen tim kreatif memakai AI sungguhan (Groq gratis +
+ Pollinations), perbaikan lint/test, peran Ide/Cerita/Foto/Video
+
+---
+ package.json                      |   2 +-
+ scripts/grok-pwa-plugin.test.mjs  |   4 +
+ src/lib/app-data/client.server.ts |   4 +-
+ src/office/Hud.tsx                |  25 ++-
+ src/office/Results.tsx            | 358 ++++++++++++++++++++++++++++++
+ src/office/ai-prompts.ts          | 111 +++++++++
+ src/office/ai.test.ts             | 133 +++++++++++
+ src/office/ai.ts                  | 191 ++++++++++++++++
+ src/office/brief.test.ts          |  15 +-
+ src/office/brief.ts               |  14 +-
+ src/office/sim.ts                 |  32 ++-
+ src/office/store.ts               |  65 +++++-
+ src/office/world.ts               |  42 ++--
+ src/routeTree.gen.ts              |  24 +-
+ src/routes/__root.tsx             |   2 +-
+ src/routes/api.agent.ts           | 106 +++++++++
+ src/styles.css                    | 223 +++++++++++++++++++
+ 17 files changed, 1297 insertions(+), 54 deletions(-)
+ create mode 100644 src/office/Results.tsx
+ create mode 100644 src/office/ai-prompts.ts
+ create mode 100644 src/office/ai.test.ts
+ create mode 100644 src/office/ai.ts
+ create mode 100644 src/routes/api.agent.ts
+
+diff --git a/package.json b/package.json
+index 861d6e5..bcef6e4 100644
+--- a/package.json
++++ b/package.json
+@@ -16,7 +16,7 @@
+     "preview:stop": "node scripts/preview.mjs stop",
+     "typecheck": "tsc --noEmit",
+     "check:auth": "node scripts/check-auth-invariant.mjs",
+-    "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/preview-path-prefix.test.ts src/office/brief.test.ts",
++    "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/preview-path-prefix.test.ts src/office/brief.test.ts src/office/ai.test.ts",
+     "lint": "eslint .",
+     "format": "prettier --write ."
+   },
+diff --git a/scripts/grok-pwa-plugin.test.mjs b/scripts/grok-pwa-plugin.test.mjs
+index 30d01b7..17d330a 100644
+--- a/scripts/grok-pwa-plugin.test.mjs
++++ b/scripts/grok-pwa-plugin.test.mjs
+@@ -21,6 +21,10 @@ import { renderInstallPage } from "./grok-pwa-plugin.mjs";
+ 
+ const TEMPLATE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+ 
++// Hermetic: head-injection tests must not pick up the app's own src/lib/og/site.json
++// (title/type/card), otherwise renaming the app breaks unrelated assertions.
++process.chdir(mkdtempSync(join(tmpdir(), "grok-pwa-test-")));
++
+ test("injects before </head>", () => {
+   const out = injectGrokPwaHead("<html><head><title>x</title></head><body></body></html>");
+   assert.match(out, /rel="manifest"/);
+diff --git a/src/lib/app-data/client.server.ts b/src/lib/app-data/client.server.ts
+index c0c35e2..9ea2f6c 100644
+--- a/src/lib/app-data/client.server.ts
++++ b/src/lib/app-data/client.server.ts
+@@ -278,7 +278,9 @@ function tokenIdentityKey(token: string): string {
+             .digest("base64url");
+         }
+       }
+-    } catch {}
++    } catch {
++      // Token is not a decodable JWT; fall back to hashing the raw token below.
++    }
+   }
+   return createHash("sha256").update(token).digest("base64url");
+ }
+diff --git a/src/office/Hud.tsx b/src/office/Hud.tsx
+index dbafac6..b3ec2c1 100644
+--- a/src/office/Hud.tsx
++++ b/src/office/Hud.tsx
+@@ -1,14 +1,15 @@
+ import { useEffect, useRef, useState } from "react";
+ import { Clock3, Footprints, Gauge, Pause, Play, Send, X } from "lucide-react";
+ import { formatClock, sim, statusText } from "./sim";
+-import { cycleSpeed, dismissIntro, selectAgent, setMode, submitBrief, toggleFeed, togglePause, useOffice } from "./store";
++import { cycleSpeed, dismissIntro, selectAgent, setMode, setPanel, submitBrief, toggleFeed, togglePause, useOffice } from "./store";
++import { ResultsPanel } from "./Results";
+ import { AGENT_IDS, PROFILES, ROOMS, type AgentId } from "./world";
+ import { labelNodes } from "./labels";
+ 
+ const SAMPLES = [
+   "Kampanye 7 hari untuk peluncuran kopi susu baru",
+-  "Naskah Reels 30 detik tentang tips hemat bulanan",
+-  "Carousel 8 slide: 5 kesalahan pemula investasi",
++  "Cerita pendek tentang pemilik warung kopi yang pantang menyerah",
++  "Foto produk 5 gaya untuk toko sepatu lokal",
+   "Standup: status konten minggu ini",
+ ];
+ 
+@@ -54,6 +55,9 @@ export function Hud() {
+   const selected = useOffice((s) => s.selected);
+   const intro = useOffice((s) => s.intro);
+   const feed = useOffice((s) => s.feed);
++  const panel = useOffice((s) => s.panel);
++  const running = useOffice((s) => s.running);
++  const hasResults = useOffice((s) => Object.keys(s.results).length > 0);
+   useOffice((s) => s.tick);
+   const [brief, setBrief] = useState("");
+   const [saved, setSaved] = useState<string[]>([]);
+@@ -96,6 +100,11 @@ export function Hud() {
+             <Footprints size={16} />
+             Jalan
+           </button>
++          {hasResults ? (
++            <button type="button" className={panel ? "text-btn is-on" : "text-btn"} onClick={() => setPanel(!panel)} aria-expanded={panel}>
++              {running ? "Hasil (berjalan)" : "Hasil kerja"}
++            </button>
++          ) : null}
+           <button type="button" className="text-btn" onClick={toggleFeed} aria-expanded={feed}>
+             Aktivitas
+           </button>
+@@ -108,7 +117,7 @@ export function Hud() {
+             <p className="brand-kicker">Studio yang bisa dilihat</p>
+             <h2>Lima orang, enam ruangan.</h2>
+             <p>
+-              Strategi, Naskah, Visual, Video, dan Direktur Kreatif bekerja di studionya masing-masing, lalu
++              Ide, Cerita, Foto, Video, dan Direktur Kreatif bekerja di studionya masing-masing, lalu
+               menyerahkan hasil satu ke satu lewat gelembung. Kamu bisa keliling atau kirim brief — Hermes yang
+               membagi dan menjaga alurnya.
+             </p>
+@@ -148,7 +157,8 @@ export function Hud() {
+           </div>
+         )}
+ 
+-        {selected ? <Dossier id={selected} /> : null}
++        {panel ? <ResultsPanel /> : null}
++        {selected && !panel ? <Dossier id={selected} /> : null}
+ 
+         {mode === "walk" ? <Stick /> : null}
+         {mode === "orbit" ? (
+@@ -194,7 +204,7 @@ export function Hud() {
+             id="brief"
+             value={brief}
+             onChange={(event) => setBrief(event.target.value)}
+-            placeholder="Tulis brief konten, misalnya carousel 8 slide tips hemat"
++            placeholder="Tulis brief, misalnya: cerita pendek + foto + video tentang kopi susu baru"
+             maxLength={180}
+           />
+           <button type="submit" className="icon-btn is-on" aria-label="Kirim brief">
+@@ -255,7 +265,8 @@ function Dossier({ id }: { id: AgentId }) {
+         ))}
+       </ul>
+       <p className="note">
+-        Percakapan dan hasil kerja ini masih skenario di Atrium, belum dibuat oleh AI sungguhan.
++        Saat kamu mengirim brief, hasil kerja agen ditulis oleh AI sungguhan (model gratis di Groq). Obrolan santai antar karakter
++        saat tidak ada brief masih skenario.
+       </p>
+     </aside>
+   );
+diff --git a/src/office/Results.tsx b/src/office/Results.tsx
+new file mode 100644
+index 0000000..1ae7930
+--- /dev/null
++++ b/src/office/Results.tsx
+@@ -0,0 +1,358 @@
++import { useEffect, useMemo, useRef, useState } from "react";
++import { Download, Film, Play, Square, X } from "lucide-react";
++import { imageUrl, list, objs, sleep, str, toMarkdown, toText, type AgentData, type AgentResult } from "./ai";
++import { setPanel, useOffice } from "./store";
++import { PROFILES, type AgentId } from "./world";
++
++const ORDER: AgentId[] = ["raka", "sari", "dimas", "nia", "hermes"];
++
++/**
++ * Pollinations' anonymous tier allows roughly one image every 15 seconds, so every
++ * picture in the page waits its turn in one shared queue and retries on failure.
++ */
++let chain: Promise<unknown> = Promise.resolve();
++
++function probe(url: string): Promise<boolean> {
++  return new Promise((resolve) => {
++    const img = new Image();
++    const timer = setTimeout(() => resolve(false), 70_000);
++    img.onload = () => {
++      clearTimeout(timer);
++      resolve(true);
++    };
++    img.onerror = () => {
++      clearTimeout(timer);
++      resolve(false);
++    };
++    img.src = url;
++  });
++}
++
++function queueImage(url: string): Promise<boolean> {
++  const job = chain.then(async () => {
++    for (let attempt = 0; attempt < 3; attempt += 1) {
++      if (await probe(url)) {
++        await sleep(3000);
++        return true;
++      }
++      await sleep(16_000);
++    }
++    return false;
++  });
++  chain = job.catch(() => undefined);
++  return job;
++}
++
++function useQueuedImage(prompt: string, seed: number, enabled: boolean) {
++  const url = useMemo(() => imageUrl(prompt, seed), [prompt, seed]);
++  const [state, setState] = useState<"idle" | "loading" | "ready" | "failed">("idle");
++  useEffect(() => {
++    if (!enabled || !prompt) return;
++    let alive = true;
++    setState("loading");
++    void queueImage(url).then((ok) => {
++      if (alive) setState(ok ? "ready" : "failed");
++    });
++    return () => {
++      alive = false;
++    };
++  }, [url, prompt, enabled]);
++  return { url, state };
++}
++
++function AiImage({ prompt, seed, enabled = true, caption }: { prompt: string; seed: number; enabled?: boolean; caption: string }) {
++  const { url, state } = useQueuedImage(prompt, seed, enabled);
++  return (
++    <figure className="shot-img">
++      {state === "ready" ? (
++        <img src={url} alt={caption} loading="lazy" />
++      ) : (
++        <div className="shot-wait">{state === "failed" ? "Gambar gagal dimuat. Layanan gratis sedang padat." : state === "idle" ? "Menunggu giliran" : "Foto sedang dibuat atau antre…"}</div>
++      )}
++    </figure>
++  );
++}
++
++function Chips({ items, hash }: { items: string[]; hash?: boolean }) {
++  if (!items.length) return null;
++  return (
++    <div className="res-chips">
++      {items.map((item) => (
++        <span key={item}>{hash ? `#${item.replace(/^#/, "")}` : item}</span>
++      ))}
++    </div>
++  );
++}
++
++function Field({ label, value }: { label: string; value: string }) {
++  if (!value) return null;
++  return (
++    <div className="res-field">
++      <dt>{label}</dt>
++      <dd>{value}</dd>
++    </div>
++  );
++}
++
++function Bullets({ label, items }: { label: string; items: string[] }) {
++  if (!items.length) return null;
++  return (
++    <div className="res-field">
++      <dt>{label}</dt>
++      <dd>
++        <ul>
++          {items.map((item) => (
++            <li key={item}>{item}</li>
++          ))}
++        </ul>
++      </dd>
++    </div>
++  );
++}
++
++function Photo({ d }: { d: AgentData }) {
++  const shots = objs(d.shots).slice(0, 3);
++  return (
++    <>
++      <Field label="Konsep" value={str(d.konsep)} />
++      <Chips items={list(d.palet)} />
++      <div className="shot-grid">
++        {shots.map((shot, i) => (
++          <div key={`${str(shot.judul)}-${i}`} className="shot">
++            <AiImage prompt={str(shot.prompt_en)} seed={101 + i} caption={str(shot.judul)} />
++            <h4>{str(shot.judul)}</h4>
++            <p>{str(shot.arahan)}</p>
++          </div>
++        ))}
++      </div>
++    </>
++  );
++}
++
++function sceneSeconds(narasi: string) {
++  const words = narasi.split(/\s+/).filter(Boolean).length;
++  return Math.max(4, Math.min(9, Math.round(words * 0.45) + 2));
++}
++
++function Player({ scenes, onClose }: { scenes: AgentData[]; onClose: () => void }) {
++  const [i, setI] = useState(0);
++  const [playing, setPlaying] = useState(false);
++  const [voice, setVoice] = useState(true);
++  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
++  const scene = scenes[i];
++  const frames = scenes.map((s, n) => ({ prompt: str(s.prompt_en), seed: 201 + n }));
++  const current = useQueuedImage(frames[i]?.prompt ?? "", frames[i]?.seed ?? 0, true);
++  // Pre-queue the remaining frames so playback does not stall on every scene.
++  const rest = frames.slice(1).map((f) => ({ ...f }));
++  useEffect(() => () => window.speechSynthesis?.cancel(), []);
++
++  useEffect(() => {
++    if (!playing || !scene) return;
++    const narasi = str(scene.narasi);
++    if (voice && narasi && "speechSynthesis" in window) {
++      window.speechSynthesis.cancel();
++      const u = new SpeechSynthesisUtterance(narasi);
++      u.lang = "id-ID";
++      window.speechSynthesis.speak(u);
++    }
++    timer.current = setTimeout(() => {
++      if (i + 1 < scenes.length) setI(i + 1);
++      else setPlaying(false);
++    }, sceneSeconds(narasi) * 1000);
++    return () => {
++      if (timer.current) clearTimeout(timer.current);
++    };
++  }, [playing, i, scene, scenes.length, voice]);
++
++  if (!scene) return null;
++  return (
++    <div className="player">
++      <div className="player-stage">
++        {current.state === "ready" ? (
++          <img key={i} className="kb" src={current.url} alt={str(scene.visual)} style={{ animationDuration: `${sceneSeconds(str(scene.narasi))}s` }} />
++        ) : (
++          <div className="shot-wait">{current.state === "failed" ? "Frame gagal dimuat." : "Frame sedang dibuat atau antre…"}</div>
++        )}
++        {str(scene.teks_layar) ? <p className="player-caption">{str(scene.teks_layar)}</p> : null}
++      </div>
++      <p className="player-line">
++        <b>
++          Scene {i + 1}/{scenes.length} · {str(scene.waktu)}
++        </b>{" "}
++        {str(scene.narasi)}
++      </p>
++      <div className="player-bar">
++        <button type="button" className="text-btn is-on" onClick={() => setPlaying((p) => !p)} disabled={current.state !== "ready"}>
++          {playing ? <Square size={14} /> : <Play size={14} />}
++          {playing ? "Berhenti" : "Putar"}
++        </button>
++        <button type="button" className="text-btn" onClick={() => { setPlaying(false); setI((n) => Math.max(0, n - 1)); }} disabled={i === 0}>
++          Sebelumnya
++        </button>
++        <button type="button" className="text-btn" onClick={() => { setPlaying(false); setI((n) => Math.min(scenes.length - 1, n + 1)); }} disabled={i === scenes.length - 1}>
++          Berikutnya
++        </button>
++        <label className="player-voice">
++          <input type="checkbox" checked={voice} onChange={(e) => setVoice(e.target.checked)} /> Suara narasi
++        </label>
++        <button type="button" className="icon-btn" onClick={onClose} aria-label="Tutup pemutar">
++          <X size={16} />
++        </button>
++      </div>
++      <div className="player-prefetch" aria-hidden="true">
++        {rest.map((f, n) => (
++          <Prefetch key={f.seed} prompt={f.prompt} seed={f.seed} active={n + 1 > i} />
++        ))}
++      </div>
++    </div>
++  );
++}
++
++function Prefetch({ prompt, seed, active }: { prompt: string; seed: number; active: boolean }) {
++  useQueuedImage(prompt, seed, active);
++  return null;
++}
++
++function Video({ d }: { d: AgentData }) {
++  const scenes = objs(d.scenes).slice(0, 4);
++  const [open, setOpen] = useState(false);
++  return (
++    <>
++      <Field label="Judul" value={str(d.judul)} />
++      <Field label="Durasi" value={str(d.durasi)} />
++      <Field label="Musik" value={str(d.musik)} />
++      <ol className="scenes">
++        {scenes.map((s, n) => (
++          <li key={`${str(s.waktu)}-${n}`}>
++            <b>{str(s.waktu)}</b>
++            <p>{str(s.visual)}</p>
++            {str(s.narasi) ? <p className="muted">Narasi: {str(s.narasi)}</p> : null}
++            {str(s.teks_layar) ? <p className="muted">Teks layar: {str(s.teks_layar)}</p> : null}
++          </li>
++        ))}
++      </ol>
++      {open ? (
++        <Player scenes={scenes} onClose={() => setOpen(false)} />
++      ) : (
++        <button type="button" className="text-btn" onClick={() => setOpen(true)} disabled={!scenes.length}>
++          <Film size={16} />
++          Buat pratinjau video
++        </button>
++      )}
++      <p className="muted small">Pratinjau memutar frame gambar AI dengan teks dan suara narasi di browser. Ini bukan file video.</p>
++    </>
++  );
++}
++
++function Body({ id, res }: { id: AgentId; res: AgentResult }) {
++  const d = res.data;
++  // Models sometimes answer with unexpected keys; never show an empty card.
++  if (!d || !toText(id, res).trim()) return <p className="res-raw">{res.raw}</p>;
++  if (id === "raka") {
++    return (
++      <>
++        <Field label="Audiens" value={str(d.audiens)} />
++        <Bullets label="Tren" items={list(d.tren)} />
++        <Field label="Angle" value={str(d.angle)} />
++        <Bullets label="Ide konten" items={list(d.ide)} />
++        <Chips items={list(d.hashtag)} hash />
++        <Field label="Waktu posting" value={str(d.waktu_posting)} />
++      </>
++    );
++  }
++  if (id === "sari") {
++    return (
++      <>
++        <h4 className="story-title">{str(d.judul)}</h4>
++        <Field label="Hook" value={str(d.hook)} />
++        <p className="story">{str(d.cerita)}</p>
++        <Field label="Caption" value={str(d.caption)} />
++        <Field label="CTA" value={str(d.cta)} />
++      </>
++    );
++  }
++  if (id === "dimas") return <Photo d={d} />;
++  if (id === "nia") return <Video d={d} />;
++  return (
++    <>
++      <Field label="Skor" value={str(d.skor) ? `${str(d.skor)} / 10` : ""} />
++      <Field label="Siap publish" value={d.siap_publish === true ? "Ya" : "Belum"} />
++      <Bullets label="Kekuatan" items={list(d.kekuatan)} />
++      <Bullets label="Perbaikan" items={list(d.perbaikan)} />
++      <Field label="Catatan" value={str(d.catatan)} />
++    </>
++  );
++}
++
++function statusLabel(res: AgentResult) {
++  if (res.status === "done") return "Selesai";
++  if (res.status === "error") return "Gagal";
++  return res.waiting ? `Menunggu kuota ${res.waiting} dtk` : "Bekerja…";
++}
++
++function download(brief: string, results: Partial<Record<AgentId, AgentResult>>) {
++  const blob = new Blob([toMarkdown(brief, results)], { type: "text/markdown;charset=utf-8" });
++  const url = URL.createObjectURL(blob);
++  const a = document.createElement("a");
++  a.href = url;
++  a.download = "paket-konten.md";
++  a.click();
++  URL.revokeObjectURL(url);
++}
++
++export function ResultsPanel() {
++  const results = useOffice((s) => s.results);
++  const brief = useOffice((s) => s.resultsBrief);
++  const running = useOffice((s) => s.running);
++  const [tab, setTab] = useState<AgentId>("raka");
++  const present = ORDER.filter((id) => results[id]);
++  const active = results[tab] ? tab : (present[present.length - 1] ?? tab);
++  const res = results[active];
++  const anyDone = present.some((id) => results[id]?.status === "done");
++
++  // Follow the agent that is currently working so the panel never looks frozen.
++  useEffect(() => {
++    const working = ORDER.find((id) => results[id]?.status === "working");
++    if (working) setTab(working);
++  }, [results]);
++
++  return (
++    <section className="results hit" aria-label="Hasil kerja tim">
++      <div className="sheet-head">
++        <div>
++          <p className="brand-kicker">{running ? "Tim sedang bekerja dengan AI" : "Hasil kerja AI"}</p>
++          <h2>{brief || "Hasil kerja"}</h2>
++        </div>
++        <div className="res-actions">
++          {anyDone ? (
++            <button type="button" className="text-btn" onClick={() => download(brief, results)}>
++              <Download size={16} />
++              Unduh .md
++            </button>
++          ) : null}
++          <button type="button" className="icon-btn" onClick={() => setPanel(false)} aria-label="Tutup hasil kerja">
++            <X size={18} />
++          </button>
++        </div>
++      </div>
++      <div className="res-tabs" role="tablist">
++        {ORDER.filter((id) => present.includes(id)).map((id) => (
++          <button key={id} type="button" role="tab" aria-selected={active === id} className={active === id ? `res-tab is-on who-${id}` : "res-tab"} onClick={() => setTab(id)}>
++            {PROFILES[id].team}
++            <small>{statusLabel(results[id]!)}</small>
++          </button>
++        ))}
++      </div>
++      {res ? (
++        <div className="res-body">
++          <p className="role">{PROFILES[active].name} · {PROFILES[active].role}</p>
++          {res.status === "working" ? <p className="muted">{res.waiting ? `Kuota gratis penuh, mencoba lagi dalam ${res.waiting} detik…` : "Sedang menulis. Biasanya beberapa detik."}</p> : null}
++          {res.status === "error" ? <p className="res-error">{res.error}</p> : null}
++          {res.status === "done" ? <Body id={active} res={res} /> : null}
++        </div>
++      ) : (
++        <p className="muted">Belum ada hasil.</p>
++      )}
++    </section>
++  );
++}
+diff --git a/src/office/ai-prompts.ts b/src/office/ai-prompts.ts
+new file mode 100644
+index 0000000..2efa47e
+--- /dev/null
++++ b/src/office/ai-prompts.ts
+@@ -0,0 +1,111 @@
++/**
++ * Shared, dependency-free pieces of the AI backend: what each agent is told,
++ * how a request is validated, and a tiny per-IP rate limiter. Kept free of
++ * framework imports so it can be unit tested with plain Node.
++ */
++
++export type AiAgentId = "raka" | "sari" | "dimas" | "nia" | "hermes";
++
++export const AI_AGENT_IDS: AiAgentId[] = ["raka", "sari", "dimas", "nia", "hermes"];
++
++export type AgentSetup = { system: string; maxTokens: number };
++
++const BASE =
++  "Kamu anggota tim konten kreatif berbahasa Indonesia. Balas HANYA dengan satu objek JSON valid, tanpa markdown dan tanpa teks lain. " +
++  "Tulis dalam bahasa Indonesia, kecuali kolom yang namanya berakhiran _en (bahasa Inggris). " +
++  "Konkret, singkat, dan siap pakai. Jangan mengarang fakta, angka statistik, atau nama merek yang tidak ada di brief. " +
++  'Kolom "ringkas" wajib ada: satu kalimat maksimal 90 karakter, kamu ucapkan ke rekan satu tim.';
++
++export const AGENT_SETUP: Record<AiAgentId, AgentSetup> = {
++  raka: {
++    maxTokens: 800,
++    system:
++      `${BASE}\n\nPeranmu: Raka, strategis dan periset konten. Dari brief, tentukan arah konten.\n` +
++      'Skema JSON: {"ringkas": string, "audiens": string, "tren": [3 string], "angle": string, ' +
++      '"ide": [3 string, masing-masing judul + satu kalimat], "hashtag": [6 string tanpa #], "waktu_posting": string}',
++  },
++  sari: {
++    maxTokens: 1100,
++    system:
++      `${BASE}\n\nPeranmu: Sari, storyteller dan penulis naskah. Tulis cerita atau naskah utuh yang enak dibaca/didengar, ` +
++      "dengan pembuka yang kuat, alur jelas, dan penutup. Panjang cerita 120 sampai 220 kata. Ikuti angle dari Raka jika ada.\n" +
++      'Skema JSON: {"ringkas": string, "judul": string, "hook": string, "cerita": string, "caption": string, "cta": string}',
++  },
++  dimas: {
++    maxTokens: 1000,
++    system:
++      `${BASE}\n\nPeranmu: Dimas, fotografer dan kreator visual. Susun konsep sesi foto yang bisa langsung dieksekusi dan tepat 3 shot.\n` +
++      'Kolom prompt_en adalah prompt gambar bahasa Inggris, 25 sampai 45 kata: subjek, suasana, cahaya, komposisi, gaya foto. ' +
++      "Jangan menaruh teks, logo, atau orang terkenal di dalam gambar.\n" +
++      'Skema JSON: {"ringkas": string, "konsep": string, "palet": [4 string nama warna], ' +
++      '"shots": [{"judul": string, "arahan": string, "prompt_en": string}]}',
++  },
++  nia: {
++    maxTokens: 1100,
++    system:
++      `${BASE}\n\nPeranmu: Nia, produser video pendek (Reels/TikTok/Shorts). Susun storyboard tepat 4 scene yang total 20 sampai 40 detik.\n` +
++      "Scene pertama harus hook dalam 3 detik. Kolom narasi dibacakan sebagai voiceover, maksimal 20 kata per scene. " +
++      "Kolom prompt_en adalah prompt gambar bahasa Inggris, 25 sampai 45 kata, untuk frame scene itu. Tanpa teks atau logo di gambar.\n" +
++      'Skema JSON: {"ringkas": string, "judul": string, "durasi": string, "musik": string, ' +
++      '"scenes": [{"waktu": string, "visual": string, "narasi": string, "teks_layar": string, "prompt_en": string}]}',
++  },
++  hermes: {
++    maxTokens: 700,
++    system:
++      `${BASE}\n\nPeranmu: Hermes, Creative Director. Review hasil kerja tim terhadap brief secara jujur. Beri skor 1 sampai 10, ` +
++      "jangan menggelembungkan nilai. Sebut kekuatan nyata dan perbaikan yang spesifik.\n" +
++      'Skema JSON: {"ringkas": string, "skor": number, "siap_publish": boolean, "kekuatan": [2 sampai 3 string], ' +
++      '"perbaikan": [2 sampai 3 string], "catatan": string}',
++  },
++};
++
++export const MAX_BRIEF = 400;
++export const MAX_CONTEXT = 3600;
++
++export type AgentRequest = { agent: AiAgentId; brief: string; context: string };
++
++export function validateAgentRequest(body: unknown): { ok: true; value: AgentRequest } | { ok: false; message: string } {
++  if (!body || typeof body !== "object") return { ok: false, message: "Body harus berupa objek JSON." };
++  const { agent, brief, context } = body as Record<string, unknown>;
++  if (typeof agent !== "string" || !AI_AGENT_IDS.includes(agent as AiAgentId)) {
++    return { ok: false, message: "Agen tidak dikenal." };
++  }
++  if (typeof brief !== "string" || !brief.trim()) return { ok: false, message: "Brief kosong." };
++  const ctx = typeof context === "string" ? context : "";
++  return {
++    ok: true,
++    value: {
++      agent: agent as AiAgentId,
++      brief: brief.trim().slice(0, MAX_BRIEF),
++      context: ctx.slice(0, MAX_CONTEXT),
++    },
++  };
++}
++
++export function userPrompt(req: AgentRequest): string {
++  const ctx = req.context.trim();
++  return ctx
++    ? `Brief dari klien:\n${req.brief}\n\nHasil kerja rekan tim sejauh ini:\n${ctx}\n\nKerjakan bagianmu sekarang. Balas JSON saja.`
++    : `Brief dari klien:\n${req.brief}\n\nKerjakan bagianmu sekarang. Balas JSON saja.`;
++}
++
++const hits = new Map<string, number[]>();
++
++/** Sliding-window limiter. Best effort only: each serverless instance keeps its own memory. */
++export function hitRateLimit(key: string, now = Date.now(), limit = 14, windowMs = 60_000): boolean {
++  const recent = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
++  if (recent.length >= limit) {
++    hits.set(key, recent);
++    return true;
++  }
++  recent.push(now);
++  hits.set(key, recent);
++  if (hits.size > 500) {
++    for (const [k, v] of hits) if (!v.some((t) => now - t < windowMs)) hits.delete(k);
++  }
++  return false;
++}
++
++export function resetRateLimit() {
++  hits.clear();
++}
+diff --git a/src/office/ai.test.ts b/src/office/ai.test.ts
+new file mode 100644
+index 0000000..7d44257
+--- /dev/null
++++ b/src/office/ai.test.ts
+@@ -0,0 +1,133 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import { AiError, buildContext, callAgent, imageUrl, parseJson, runPipeline, summaryOf, toMarkdown, toText, type AgentResult } from "./ai.ts";
++import { AGENT_SETUP, hitRateLimit, resetRateLimit, userPrompt, validateAgentRequest } from "./ai-prompts.ts";
++import { planBrief } from "./brief.ts";
++
++const done = (data: Record<string, unknown>): AgentResult => ({ status: "done", data });
++
++test("parseJson tolerates code fences and chatter", () => {
++  assert.deepEqual(parseJson('```json\n{"a":1}\n```'), { a: 1 });
++  assert.deepEqual(parseJson('Tentu! {"a":"b"} semoga membantu'), { a: "b" });
++  assert.equal(parseJson("bukan json"), null);
++  assert.equal(parseJson("[1,2]"), null);
++  assert.equal(parseJson('{"rusak":'), null);
++});
++
++test("summaryOf prefers ringkas and falls back gracefully", () => {
++  assert.equal(summaryOf("sari", done({ ringkas: "Cerita siap.", judul: "X" })), "Cerita siap.");
++  assert.equal(summaryOf("sari", done({ judul: "Warung Kopi" })), "Warung Kopi");
++  assert.equal(summaryOf("nia", { status: "done", raw: "teks bebas" }), "teks bebas");
++  assert.match(summaryOf("nia", { status: "done" }), /Nia/);
++});
++
++test("toText and buildContext carry earlier work forward", () => {
++  const raka = done({ audiens: "Pecinta kopi", angle: "Ritual pagi", hashtag: ["kopi", "#pagi"] });
++  const text = toText("raka", raka);
++  assert.match(text, /Audiens: Pecinta kopi/);
++  assert.match(text, /#kopi #pagi/);
++  const ctx = buildContext({ raka, sari: { status: "error", error: "x" } });
++  assert.match(ctx, /Raka \(Ide & Riset\)/);
++  assert.doesNotMatch(ctx, /Sari/);
++  assert.ok(buildContext({ raka }, 20).length < 80);
++});
++
++test("toMarkdown exports finished agents only", () => {
++  const md = toMarkdown("Brief X", { sari: done({ judul: "Judul A", cerita: "Isi" }), nia: { status: "working" } });
++  assert.match(md, /\*\*Brief:\*\* Brief X/);
++  assert.match(md, /\*\*Judul:\*\* Judul A/);
++  assert.doesNotMatch(md, /Nia/);
++});
++
++test("imageUrl encodes the prompt and pins size and seed", () => {
++  const url = imageUrl("a cup & saucer", 7);
++  assert.ok(url.startsWith("https://image.pollinations.ai/prompt/a%20cup%20%26%20saucer?"));
++  assert.match(url, /seed=7/);
++  assert.match(url, /width=768/);
++});
++
++test("validateAgentRequest rejects bad input and clips long fields", () => {
++  assert.equal(validateAgentRequest(null).ok, false);
++  assert.equal(validateAgentRequest({ agent: "x", brief: "a" }).ok, false);
++  assert.equal(validateAgentRequest({ agent: "sari", brief: "   " }).ok, false);
++  const ok = validateAgentRequest({ agent: "sari", brief: "a".repeat(900), context: "c".repeat(9000) });
++  assert.ok(ok.ok);
++  if (ok.ok) {
++    assert.equal(ok.value.brief.length, 400);
++    assert.equal(ok.value.context.length, 3600);
++  }
++});
++
++test("every agent prompt demands JSON with a ringkas field", () => {
++  for (const [id, setup] of Object.entries(AGENT_SETUP)) {
++    assert.match(setup.system, /JSON/, id);
++    assert.match(setup.system, /ringkas/, id);
++    assert.ok(setup.maxTokens >= 600, id);
++  }
++  assert.match(userPrompt({ agent: "sari", brief: "kopi", context: "" }), /Brief dari klien:\nkopi/);
++  assert.match(userPrompt({ agent: "sari", brief: "kopi", context: "ide" }), /rekan tim/);
++});
++
++test("rate limiter blocks after the limit and recovers", () => {
++  resetRateLimit();
++  for (let i = 0; i < 3; i += 1) assert.equal(hitRateLimit("ip", 1000 + i, 3, 60_000), false);
++  assert.equal(hitRateLimit("ip", 1010, 3, 60_000), true);
++  assert.equal(hitRateLimit("ip", 70_000, 3, 60_000), false);
++});
++
++function fakeFetch(replies: { status: number; body: unknown }[]): typeof fetch {
++  let n = 0;
++  return (async () => {
++    const r = replies[Math.min(n, replies.length - 1)]!;
++    n += 1;
++    return new Response(JSON.stringify(r.body), { status: r.status });
++  }) as typeof fetch;
++}
++
++test("callAgent surfaces server errors with their code", async () => {
++  await assert.rejects(
++    callAgent("sari", "b", "", undefined, fakeFetch([{ status: 503, body: { error: "no_key", message: "Kunci belum ada" } }])),
++    (e: unknown) => e instanceof AiError && e.code === "no_key" && /Kunci/.test(e.message),
++  );
++});
++
++test("runPipeline runs agents in order, hands context on, and stops on no_key", async () => {
++  const plan = planBrief("Cerita pendek tentang kopi");
++  const calls: string[] = [];
++  const events: string[] = [];
++  const fetcher = (async (_url: string, init: { body: string }) => {
++    const { agent, context } = JSON.parse(init.body) as { agent: string; context: string };
++    calls.push(`${agent}:${context.length > 0}`);
++    return new Response(JSON.stringify({ text: JSON.stringify({ ringkas: `${agent} oke`, judul: "J" }) }), { status: 200 });
++  }) as unknown as typeof fetch;
++  await runPipeline(
++    plan,
++    "Cerita pendek tentang kopi",
++    {
++      onStart: (id) => events.push(`start:${id}`),
++      onWait: () => {},
++      onDone: (id, res, next) => events.push(`done:${id}>${next ?? "-"}:${res.data?.ringkas}`),
++      onError: (id) => events.push(`err:${id}`),
++      onFinish: () => events.push("finish"),
++    },
++    fetcher,
++  );
++  assert.deepEqual(calls, ["sari:false", "hermes:true"]);
++  assert.deepEqual(events, ["start:sari", "done:sari>hermes:sari oke", "start:hermes", "done:hermes>-:hermes oke", "finish"]);
++
++  const stopped: string[] = [];
++  await runPipeline(
++    planBrief("Foto dan video untuk peluncuran sepatu"),
++    "x",
++    {
++      onStart: () => {},
++      onWait: () => {},
++      onDone: () => {},
++      onError: (id) => stopped.push(id),
++      onFinish: () => stopped.push("finish"),
++    },
++    fakeFetch([{ status: 503, body: { error: "no_key", message: "m" } }]),
++  );
++  assert.equal(stopped.length, 2);
++  assert.equal(stopped[1], "finish");
++});
+diff --git a/src/office/ai.ts b/src/office/ai.ts
+new file mode 100644
+index 0000000..66fd35d
+--- /dev/null
++++ b/src/office/ai.ts
+@@ -0,0 +1,191 @@
++import type { Plan } from "./brief.ts";
++import type { AgentId } from "./world.ts";
++
++export type AgentData = Record<string, unknown>;
++export type AgentResult = {
++  status: "working" | "done" | "error";
++  data?: AgentData;
++  raw?: string;
++  error?: string;
++  /** Seconds left while waiting for the free-tier quota to free up. */
++  waiting?: number;
++};
++
++export class AiError extends Error {
++  code: string;
++  constructor(code: string, message: string) {
++    super(message);
++    this.code = code;
++  }
++}
++
++const ROLE: Record<AgentId, string> = {
++  raka: "Raka (Ide & Riset)",
++  sari: "Sari (Cerita)",
++  dimas: "Dimas (Foto)",
++  nia: "Nia (Video)",
++  hermes: "Hermes (Creative Director)",
++};
++
++export const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
++
++/** Pulls the first JSON object out of a model reply, tolerating code fences and chatter. */
++export function parseJson(text: string): AgentData | null {
++  const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
++  const start = trimmed.indexOf("{");
++  const end = trimmed.lastIndexOf("}");
++  if (start < 0 || end <= start) return null;
++  try {
++    const value = JSON.parse(trimmed.slice(start, end + 1)) as unknown;
++    return value && typeof value === "object" && !Array.isArray(value) ? (value as AgentData) : null;
++  } catch {
++    return null;
++  }
++}
++
++export const str = (v: unknown): string => (typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "");
++export const list = (v: unknown): string[] => (Array.isArray(v) ? v.map(str).filter(Boolean) : []);
++export const objs = (v: unknown): AgentData[] =>
++  Array.isArray(v) ? v.filter((x): x is AgentData => !!x && typeof x === "object" && !Array.isArray(x)) : [];
++
++export function clipText(text: string, n: number) {
++  const t = text.replace(/\s+/g, " ").trim();
++  return t.length > n ? `${t.slice(0, n - 1)}…` : t;
++}
++
++/** One line the agent says out loud when it hands its work over. */
++export function summaryOf(id: AgentId, res: AgentResult): string {
++  const said = str(res.data?.ringkas);
++  if (said) return clipText(said, 110);
++  const fallback = str(res.data?.judul) || str(res.data?.konsep) || str(res.data?.angle) || res.raw || "";
++  return fallback ? clipText(fallback, 110) : `${ROLE[id]} selesai.`;
++}
++
++/** Plain-text rendering of one agent's work: context for the next agent and the markdown export. */
++export function toText(id: AgentId, res: AgentResult): string {
++  const d = res.data;
++  if (!d) return res.raw ?? "";
++  const lines: string[] = [];
++  const add = (label: string, value: string) => value && lines.push(`${label}: ${value}`);
++  if (id === "raka") {
++    add("Audiens", str(d.audiens));
++    add("Tren", list(d.tren).join("; "));
++    add("Angle", str(d.angle));
++    add("Ide", list(d.ide).join(" | "));
++    add("Hashtag", list(d.hashtag).map((h) => `#${h.replace(/^#/, "")}`).join(" "));
++    add("Waktu posting", str(d.waktu_posting));
++  } else if (id === "sari") {
++    add("Judul", str(d.judul));
++    add("Hook", str(d.hook));
++    add("Cerita", str(d.cerita));
++    add("Caption", str(d.caption));
++    add("CTA", str(d.cta));
++  } else if (id === "dimas") {
++    add("Konsep", str(d.konsep));
++    add("Palet", list(d.palet).join(", "));
++    objs(d.shots).forEach((s, i) => add(`Shot ${i + 1}`, `${str(s.judul)} — ${str(s.arahan)}`));
++  } else if (id === "nia") {
++    add("Judul", str(d.judul));
++    add("Durasi", str(d.durasi));
++    add("Musik", str(d.musik));
++    objs(d.scenes).forEach((s, i) =>
++      add(`Scene ${i + 1} (${str(s.waktu)})`, `${str(s.visual)} | Narasi: ${str(s.narasi)} | Teks: ${str(s.teks_layar)}`),
++    );
++  } else {
++    add("Skor", str(d.skor));
++    add("Siap publish", d.siap_publish === true ? "ya" : "belum");
++    add("Kekuatan", list(d.kekuatan).join("; "));
++    add("Perbaikan", list(d.perbaikan).join("; "));
++    add("Catatan", str(d.catatan));
++  }
++  return lines.join("\n");
++}
++
++export function buildContext(done: Partial<Record<AgentId, AgentResult>>, perAgent = 800, total = 3400): string {
++  const parts: string[] = [];
++  for (const id of Object.keys(done) as AgentId[]) {
++    const res = done[id];
++    if (!res || res.status !== "done") continue;
++    parts.push(`[${ROLE[id]}]\n${clipText(toText(id, res), perAgent)}`);
++  }
++  return parts.join("\n\n").slice(0, total);
++}
++
++export function toMarkdown(brief: string, results: Partial<Record<AgentId, AgentResult>>): string {
++  const out = [`# Paket konten`, ``, `**Brief:** ${brief}`, ``];
++  for (const id of ["raka", "sari", "dimas", "nia", "hermes"] as AgentId[]) {
++    const res = results[id];
++    if (!res || res.status !== "done") continue;
++    out.push(`## ${ROLE[id]}`, ``, toText(id, res).replace(/^(.+?): /gm, "**$1:** "), ``);
++  }
++  return out.join("\n");
++}
++
++export async function callAgent(
++  agent: AgentId,
++  brief: string,
++  context: string,
++  onWait?: (seconds: number) => void,
++  fetcher: typeof fetch = fetch,
++): Promise<string> {
++  for (let attempt = 0; attempt < 4; attempt += 1) {
++    let res: Response;
++    try {
++      res = await fetcher("/api/agent", {
++        method: "POST",
++        headers: { "content-type": "application/json" },
++        body: JSON.stringify({ agent, brief, context }),
++      });
++    } catch {
++      throw new AiError("network", "Tidak bisa terhubung ke server. Periksa koneksi internet.");
++    }
++    const body = (await res.json().catch(() => null)) as { text?: string; error?: string; message?: string; retryAfter?: number } | null;
++    if (res.status === 429) {
++      const wait = Math.min(Math.max(Math.ceil(Number(body?.retryAfter) || 12), 3), 30);
++      onWait?.(wait);
++      await sleep((wait + 1) * 1000);
++      continue;
++    }
++    if (!res.ok || !body?.text) throw new AiError(body?.error ?? "unknown", body?.message ?? `Server membalas HTTP ${res.status}.`);
++    return body.text;
++  }
++  throw new AiError("rate_limited", "Kuota gratis sedang penuh. Coba kirim brief lagi sebentar lagi.");
++}
++
++export type PipelineCallbacks = {
++  onStart: (id: AgentId) => void;
++  onWait: (id: AgentId, seconds: number) => void;
++  onDone: (id: AgentId, result: AgentResult, next: AgentId | undefined) => void;
++  onError: (id: AgentId, message: string) => void;
++  onFinish: () => void;
++};
++
++/** Runs the plan one agent at a time: the free tiers are rate limited, so no parallel calls. */
++export async function runPipeline(plan: Plan, brief: string, cb: PipelineCallbacks, fetcher?: typeof fetch) {
++  const order = plan.groups.flat() as AgentId[];
++  const done: Partial<Record<AgentId, AgentResult>> = {};
++  for (let i = 0; i < order.length; i += 1) {
++    const id = order[i]!;
++    const next = order[i + 1];
++    cb.onStart(id);
++    try {
++      const raw = await callAgent(id, brief, buildContext(done), (s) => cb.onWait(id, s), fetcher);
++      const data = parseJson(raw);
++      const result: AgentResult = { status: "done", ...(data ? { data } : {}), raw };
++      done[id] = result;
++      cb.onDone(id, result, next);
++    } catch (error) {
++      const err = error instanceof AiError ? error : new AiError("unknown", "Terjadi kesalahan tak terduga.");
++      cb.onError(id, err.message);
++      if (err.code === "no_key" || err.code === "bad_key" || err.code === "network") break;
++    }
++  }
++  cb.onFinish();
++}
++
++const POLL = "https://image.pollinations.ai/prompt";
++
++export function imageUrl(prompt: string, seed: number, size = 768): string {
++  const q = new URLSearchParams({ width: String(size), height: String(size), model: "flux", nologo: "true", seed: String(seed) });
++  return `${POLL}/${encodeURIComponent(prompt.slice(0, 600))}?${q.toString()}`;
++}
+diff --git a/src/office/brief.test.ts b/src/office/brief.test.ts
+index d5a1f50..58cb860 100644
+--- a/src/office/brief.test.ts
++++ b/src/office/brief.test.ts
+@@ -15,8 +15,8 @@ test("script brief routes to Sari then Nia, reviewed by Hermes", () => {
+   assert.deepEqual(plan.groups, [["sari"], ["nia"], ["hermes"]]);
+ });
+ 
+-test("carousel brief routes to Dimas only", () => {
+-  const plan = planBrief("Carousel 8 slide: 5 kesalahan pemula investasi");
++test("photo brief routes to Dimas only", () => {
++  const plan = planBrief("Foto produk 5 gaya untuk toko sepatu lokal");
+   assert.deepEqual(plan.assignees, ["dimas"]);
+   assert.deepEqual(plan.groups, [["dimas"], ["hermes"]]);
+ });
+@@ -37,6 +37,17 @@ test("research keywords route to Raka first", () => {
+   assert.deepEqual(plan.groups[0], ["raka"]);
+ });
+ 
++test("story brief routes to Sari, reviewed by Hermes", () => {
++  const plan = planBrief("Cerita pendek tentang pemilik warung kopi");
++  assert.deepEqual(plan.assignees, ["sari"]);
++  assert.deepEqual(plan.groups, [["sari"], ["hermes"]]);
++});
++
++test("photo plus video brief runs Dimas and Nia in parallel", () => {
++  const plan = planBrief("Foto dan video untuk peluncuran sepatu");
++  assert.deepEqual(plan.groups.at(-2), ["dimas", "nia"]);
++});
++
+ test("clip shortens long text and keeps short text", () => {
+   assert.equal(clip("halo", 10), "halo");
+   assert.equal(clip("a".repeat(100), 10).length, 10);
+diff --git a/src/office/brief.ts b/src/office/brief.ts
+index b2a3a4a..08bce06 100644
+--- a/src/office/brief.ts
++++ b/src/office/brief.ts
+@@ -9,8 +9,8 @@ const CAMPAIGN = /kampanye|campaign|peluncuran|launch|paket konten|konten minggu
+ 
+ const SKILLS: Record<WorkerId, RegExp> = {
+   raka: /riset|tren|trend|audiens|kompetitor|pesaing|kalender|strategi|analitik|analisis|\bseo\b|hashtag|angle|target pasar/,
+-  sari: /caption|naskah|script|skrip|hook|headline|judul|thread|artikel|newsletter|copy|tulis|blog|voiceover teks/,
+-  dimas: /desain|visual|carousel|karusel|thumbnail|poster|logo|warna|infografis|feed|banner|slide/,
++  sari: /cerita|kisah|story|storytelling|narasi|fiksi|dongeng|caption|naskah|script|skrip|hook|headline|judul|thread|artikel|newsletter|copy|tulis|blog|voiceover teks/,
++  dimas: /foto|fotografi|photo|photoshoot|moodboard|shot list|portrait|potret|desain|visual|carousel|karusel|thumbnail|poster|logo|warna|infografis|feed|banner|slide/,
+   nia: /video|reels|reel|tiktok|shorts|storyboard|subtitle|voiceover|musik|edit|motion|youtube/,
+ };
+ 
+@@ -53,8 +53,8 @@ export function clip(text: string, n = 78) {
+ export function taskLine(id: AgentId, text: string) {
+   const bit = clip(text, 72);
+   if (id === "raka") return `Strategi: aku riset angle dulu — ${bit}`;
+-  if (id === "sari") return `Naskah: aku tulis hook dan caption — ${bit}`;
+-  if (id === "dimas") return `Visual: aku buat konsep dan layout — ${bit}`;
++  if (id === "sari") return `Cerita: aku tulis alur, hook, dan caption — ${bit}`;
++  if (id === "dimas") return `Foto: aku susun konsep, moodboard, dan shot list — ${bit}`;
+   if (id === "nia") return `Video: aku susun storyboard-nya — ${bit}`;
+   return bit;
+ }
+@@ -62,14 +62,14 @@ export function taskLine(id: AgentId, text: string) {
+ export function deliverLine(id: AgentId, text: string) {
+   const bit = clip(text, 56);
+   if (id === "raka") return `Riset selesai: audiens, tren, dan angle untuk “${bit}”.`;
+-  if (id === "sari") return `Naskah dan caption untuk “${bit}” siap.`;
+-  if (id === "dimas") return `Konsep visual dan layout untuk “${bit}” siap.`;
++  if (id === "sari") return `Cerita dan caption untuk “${bit}” siap.`;
++  if (id === "dimas") return `Konsep foto, moodboard, dan shot list untuk “${bit}” siap.`;
+   if (id === "nia") return `Storyboard dan alur video untuk “${bit}” siap.`;
+   return `Review selesai. Paket konten “${bit}” siap publish.`;
+ }
+ 
+ export function handoffLine(from: AgentId, toShort: string) {
+   if (from === "raka") return `Aku bawa hasil riset ke ${toShort}.`;
+-  if (from === "sari") return `Naskahnya aku antar ke ${toShort}.`;
++  if (from === "sari") return `Ceritanya aku antar ke ${toShort}.`;
+   return `Draf-nya aku serahkan ke ${toShort} untuk review.`;
+ }
+diff --git a/src/office/sim.ts b/src/office/sim.ts
+index 71319a0..01fc1bd 100644
+--- a/src/office/sim.ts
++++ b/src/office/sim.ts
+@@ -243,12 +243,34 @@ export function assignBrief(text: string) {
+     say(a, line, false);
+     go(a, MEET_SEATS[i]!, "meet");
+   });
+-  if (plan.standup) {
+-    sim.pipe = null;
+-    return;
+-  }
+-  sim.pipe = { groups: plan.groups, i: 0, t: STAGE_START, brief: clean };
++  // The real work is done by the AI pipeline (see ai.ts); the scripted pipe stays unused.
++  sim.pipe = null;
+   sim.hold = Math.max(sim.hold, STAGE_START + STAGE_GAP);
++  return { plan, brief: clean };
++}
++
++/** An agent starts (or keeps) working on its part while the model call is running. */
++export function agentWorking(id: AgentId, line: string) {
++  const a = person(id);
++  a.lineOverride = line;
++  say(a, line, false);
++  sim.hold = Math.max(sim.hold, 40);
++}
++
++/** An agent announces real finished work and walks it over to the next agent. */
++export function agentDelivers(id: AgentId, line: string, next?: AgentId) {
++  const a = person(id);
++  say(a, line, true);
++  if (next) {
++    a.lineOverride = handoffLine(id, PROFILES[next].short);
++    go(a, DOORS[next], "visit");
++  }
++  sim.hold = Math.max(sim.hold, 40);
++}
++
++export function agentFailed(id: AgentId, line: string) {
++  const a = person(id);
++  say(a, line, true);
+ }
+ 
+ function stepPipe(dt: number) {
+diff --git a/src/office/store.ts b/src/office/store.ts
+index 819fa2d..7d8af24 100644
+--- a/src/office/store.ts
++++ b/src/office/store.ts
+@@ -1,6 +1,7 @@
+ import { create } from "zustand";
+-import { assignBrief, sim, type CameraMode } from "./sim";
+-import type { AgentId } from "./world";
++import { agentDelivers, agentFailed, agentWorking, assignBrief, sim, type CameraMode } from "./sim";
++import { clipText, runPipeline, summaryOf, type AgentResult } from "./ai";
++import { PROFILES, type AgentId } from "./world";
+ 
+ type OfficeState = {
+   mode: CameraMode;
+@@ -10,6 +11,11 @@ type OfficeState = {
+   intro: boolean;
+   feed: boolean;
+   tick: number;
++  /** Real AI output per agent for the latest brief. */
++  results: Partial<Record<AgentId, AgentResult>>;
++  resultsBrief: string;
++  running: boolean;
++  panel: boolean;
+ };
+ 
+ export const useOffice = create<OfficeState>(() => ({
+@@ -20,6 +26,10 @@ export const useOffice = create<OfficeState>(() => ({
+   intro: true,
+   feed: false,
+   tick: 0,
++  results: {},
++  resultsBrief: "",
++  running: false,
++  panel: false,
+ }));
+ 
+ export function bump() {
+@@ -56,18 +66,61 @@ export function toggleFeed() {
+   useOffice.setState((s) => ({ feed: !s.feed }));
+ }
+ 
++export function setPanel(open: boolean) {
++  useOffice.setState({ panel: open });
++}
++
++let runId = 0;
++
++function patchResult(id: AgentId, result: AgentResult, token: number) {
++  if (token !== runId) return;
++  useOffice.setState((s) => ({ results: { ...s.results, [id]: result }, tick: s.tick + 1 }));
++}
++
+ export function submitBrief(text: string) {
+   const clean = text.trim();
+   if (!clean) return;
+-  assignBrief(clean);
++  const { plan, brief } = assignBrief(clean);
+   try {
+-    const prev = JSON.parse(localStorage.getItem("atrium-briefs-v2") || "[]") as string[];
++    const prev = JSON.parse(localStorage.getItem("atrium-briefs") || "[]") as string[];
+     const next = [clean, ...prev.filter((item) => item !== clean)].slice(0, 6);
+-    localStorage.setItem("atrium-briefs-v2", JSON.stringify(next));
++    localStorage.setItem("atrium-briefs", JSON.stringify(next));
+   } catch {
+     /* ignore quota / private mode */
+   }
+   sim.selected = "hermes";
+   sim.focus = "hermes";
+-  useOffice.setState((s) => ({ selected: "hermes", intro: false, tick: s.tick + 1 }));
++  const token = (runId += 1);
++  useOffice.setState((s) => ({
++    selected: "hermes",
++    intro: false,
++    tick: s.tick + 1,
++    results: {},
++    resultsBrief: plan.standup ? "" : brief,
++    running: !plan.standup,
++    panel: !plan.standup,
++  }));
++  if (plan.standup) return;
++
++  void runPipeline(plan, brief, {
++    onStart: (id) => {
++      patchResult(id, { status: "working" }, token);
++      agentWorking(id, `${PROFILES[id].short} mulai mengerjakan bagiannya.`);
++    },
++    onWait: (id, seconds) => {
++      patchResult(id, { status: "working", waiting: seconds }, token);
++      agentWorking(id, `Kuota gratis sedang penuh. Aku tunggu ${seconds} detik.`);
++    },
++    onDone: (id, result, next) => {
++      patchResult(id, result, token);
++      agentDelivers(id, summaryOf(id, result), next);
++    },
++    onError: (id, message) => {
++      patchResult(id, { status: "error", error: message }, token);
++      agentFailed(id, clipText(`Gagal: ${message}`, 110));
++    },
++    onFinish: () => {
++      if (token === runId) useOffice.setState((s) => ({ running: false, tick: s.tick + 1 }));
++    },
++  });
+ }
+diff --git a/src/office/world.ts b/src/office/world.ts
+index fbb30ce..38081dc 100644
+--- a/src/office/world.ts
++++ b/src/office/world.ts
+@@ -67,7 +67,7 @@ export const PROFILES: Record<AgentId, Profile> = {
+     id: "raka",
+     name: "Raka Santoso",
+     short: "Raka",
+-    team: "Strategi",
++    team: "Ide",
+     role: "Strategi & Riset Konten",
+     room: "Ruang Strategi",
+     home: "stratSeat",
+@@ -77,21 +77,21 @@ export const PROFILES: Record<AgentId, Profile> = {
+     id: "sari",
+     name: "Sari Wulandari",
+     short: "Sari",
+-    team: "Naskah",
+-    role: "Copywriter & Scriptwriter",
+-    room: "Studio Naskah",
++    team: "Cerita",
++    role: "Storyteller & Penulis Naskah",
++    room: "Studio Cerita",
+     home: "scriptSeat",
+-    focus: ["Hook, caption, dan headline", "Naskah video dan thread", "Jaga brand voice konsisten"],
++    focus: ["Cerita pendek, kisah brand, dan thread", "Hook, caption, dan naskah video", "Jaga alur dan suara cerita konsisten"],
+   },
+   dimas: {
+     id: "dimas",
+     name: "Dimas Pratama",
+     short: "Dimas",
+-    team: "Visual",
+-    role: "Visual Designer",
+-    room: "Studio Visual",
++    team: "Foto",
++    role: "Fotografer & Visual Creator",
++    room: "Studio Foto",
+     home: "visualSeat",
+-    focus: ["Carousel, poster, thumbnail", "Palet dan tipografi brand", "Brief visual dan prompt gambar"],
++    focus: ["Konsep foto, moodboard, dan shot list", "Carousel, poster, dan thumbnail", "Palet, komposisi, dan prompt gambar"],
+   },
+   nia: {
+     id: "nia",
+@@ -199,8 +199,8 @@ export function route(from: string, to: string): string[] | null {
+ 
+ export const PLACE: Record<string, string> = {
+   stratSeat: "meja Strategi",
+-  scriptSeat: "meja Naskah",
+-  visualSeat: "meja Visual",
++  scriptSeat: "meja Cerita",
++  visualSeat: "meja Foto",
+   videoSeat: "meja Video",
+   meetHead: "ujung meja rapat",
+   meetWest: "meja rapat",
+@@ -210,8 +210,8 @@ export const PLACE: Record<string, string> = {
+   lounge: "sofa lobi",
+   lobbyDesk: "meja Hermes",
+   stratDoor: "pintu Strategi",
+-  scriptDoor: "pintu Naskah",
+-  visualDoor: "pintu Visual",
++  scriptDoor: "pintu Cerita",
++  visualDoor: "pintu Foto",
+   videoDoor: "pintu Video",
+   meetDoor: "ruang rapat",
+   lobbyEntry: "lobi",
+@@ -232,8 +232,8 @@ export type Room = {
+ 
+ export const ROOMS: Room[] = [
+   { id: "strategy", name: "Ruang Strategi", agent: "raka", minX: -12.35, maxX: -4.25, minZ: 1.7, maxZ: 8.35 },
+-  { id: "script", name: "Studio Naskah", agent: "sari", minX: 4.25, maxX: 12.35, minZ: 1.7, maxZ: 8.35 },
+-  { id: "visual", name: "Studio Visual", agent: "dimas", minX: -12.35, maxX: -4.25, minZ: -8.35, maxZ: -1.7 },
++  { id: "script", name: "Studio Cerita", agent: "sari", minX: 4.25, maxX: 12.35, minZ: 1.7, maxZ: 8.35 },
++  { id: "visual", name: "Studio Foto", agent: "dimas", minX: -12.35, maxX: -4.25, minZ: -8.35, maxZ: -1.7 },
+   { id: "video", name: "Studio Video", agent: "nia", minX: 4.25, maxX: 12.35, minZ: -8.35, maxZ: -1.7 },
+   { id: "meet", name: "Ruang Rapat", agent: null, minX: -4.25, maxX: 4.25, minZ: -8.35, maxZ: -1.7 },
+   { id: "lobby", name: "Lobi", agent: "hermes", minX: -4.25, maxX: 4.25, minZ: 1.7, maxZ: 8.35 },
+@@ -249,13 +249,13 @@ export const WORK_LINES: Record<AgentId, string[]> = {
+   sari: [
+     "Hook ketiga paling kuat. Dua lainnya aku simpan.",
+     "Caption terlalu panjang. Aku pangkas jadi tiga baris.",
+-    "Naskah 30 detik. Kalimat pembukanya harus nancap.",
++    "Cerita ini butuh pembuka yang nancap, lalu twist di akhir.",
+     "Nada tulisannya aku samakan dengan brand voice.",
+   ],
+   dimas: [
+     "Palet warna aku kunci dulu, baru layout.",
+-    "Slide pertama carousel harus bisa dibaca sekali lirik.",
+-    "Thumbnail ini kontrasnya kurang. Aku naikkan.",
++    "Satu foto, satu pesan. Komposisinya aku sederhanakan.",
++    "Shot list sudah aku susun. Cahaya paling bagus pagi hari.",
+     "Tipografi dua font saja, biar rapi.",
+   ],
+   nia: [
+@@ -283,15 +283,15 @@ export const LOUNGE_LINES: Record<AgentId, string> = {
+ export const VISIT_LINES: Record<AgentId, string> = {
+   raka: "Mampir. Ada data audiens yang mau kamu lihat bareng?",
+   sari: "Aku bawa satu draf hook. Menurutmu kuat?",
+-  dimas: "Ini visualnya sudah jadi. Mau kasih masukan?",
++  dimas: "Moodboard fotonya sudah jadi. Mau kasih masukan?",
+   nia: "Storyboard-nya aku bawa. Cek alurnya sebentar?",
+   hermes: "Cuma cek. Kamu macet atau lagi fokus?",
+ };
+ 
+ export const MEET_LINES: Record<AgentId, string> = {
+   raka: "Strategi: tiga topik naik, angle minggu ini sudah dipilih.",
+-  sari: "Naskah: dua caption selesai, satu naskah nunggu hook.",
+-  dimas: "Visual: carousel kedua masuk revisi warna.",
++  sari: "Cerita: dua kisah selesai, satu naskah nunggu hook.",
++  dimas: "Foto: moodboard kedua masuk revisi warna.",
+   nia: "Video: storyboard Reels siap, tinggal subtitle.",
+   hermes: "Catat. Yang telat, kabari aku sebelum makan siang.",
+ };
+diff --git a/src/routeTree.gen.ts b/src/routeTree.gen.ts
+index dceedff..5b34a40 100644
+--- a/src/routeTree.gen.ts
++++ b/src/routeTree.gen.ts
+@@ -10,33 +10,43 @@
+ 
+ import { Route as rootRouteImport } from './routes/__root'
+ import { Route as IndexRouteImport } from './routes/index'
++import { Route as ApiAgentRouteImport } from './routes/api.agent'
+ 
+ const IndexRoute = IndexRouteImport.update({
+   id: '/',
+   path: '/',
+   getParentRoute: () => rootRouteImport,
+ } as any)
++const ApiAgentRoute = ApiAgentRouteImport.update({
++  id: '/api/agent',
++  path: '/api/agent',
++  getParentRoute: () => rootRouteImport,
++} as any)
+ 
+ export interface FileRoutesByFullPath {
+   '/': typeof IndexRoute
++  '/api/agent': typeof ApiAgentRoute
+ }
+ export interface FileRoutesByTo {
+   '/': typeof IndexRoute
++  '/api/agent': typeof ApiAgentRoute
+ }
+ export interface FileRoutesById {
+   __root__: typeof rootRouteImport
+   '/': typeof IndexRoute
++  '/api/agent': typeof ApiAgentRoute
+ }
+ export interface FileRouteTypes {
+   fileRoutesByFullPath: FileRoutesByFullPath
+-  fullPaths: '/'
++  fullPaths: '/' | '/api/agent'
+   fileRoutesByTo: FileRoutesByTo
+-  to: '/'
+-  id: '__root__' | '/'
++  to: '/' | '/api/agent'
++  id: '__root__' | '/' | '/api/agent'
+   fileRoutesById: FileRoutesById
+ }
+ export interface RootRouteChildren {
+   IndexRoute: typeof IndexRoute
++  ApiAgentRoute: typeof ApiAgentRoute
+ }
+ 
+ declare module '@tanstack/react-router' {
+@@ -48,11 +58,19 @@ declare module '@tanstack/react-router' {
+       preLoaderRoute: typeof IndexRouteImport
+       parentRoute: typeof rootRouteImport
+     }
++    '/api/agent': {
++      id: '/api/agent'
++      path: '/api/agent'
++      fullPath: '/api/agent'
++      preLoaderRoute: typeof ApiAgentRouteImport
++      parentRoute: typeof rootRouteImport
++    }
+   }
+ }
+ 
+ const rootRouteChildren: RootRouteChildren = {
+   IndexRoute: IndexRoute,
++  ApiAgentRoute: ApiAgentRoute,
+ }
+ export const routeTree = rootRouteImport
+   ._addFileChildren(rootRouteChildren)
+diff --git a/src/routes/__root.tsx b/src/routes/__root.tsx
+index 83162f5..e0b62f2 100644
+--- a/src/routes/__root.tsx
++++ b/src/routes/__root.tsx
+@@ -11,7 +11,7 @@ export const Route = createRootRoute({
+       { charSet: "utf-8" },
+       { name: "viewport", content: "width=device-width, initial-scale=1" },
+       { title: APP_NAME },
+-      { name: "description", content: "Studio 3D untuk lima agen tim kreatif konten: Strategi, Naskah, Visual, Video, dan Creative Director." },
++      { name: "description", content: "Studio 3D untuk lima agen tim kreatif konten: Ide, Cerita, Foto, Video, dan Creative Director." },
+       { name: "theme-color", content: "#f3eee6" },
+     ],
+     links: [
+diff --git a/src/routes/api.agent.ts b/src/routes/api.agent.ts
+new file mode 100644
+index 0000000..040e8b3
+--- /dev/null
++++ b/src/routes/api.agent.ts
+@@ -0,0 +1,106 @@
++import { createFileRoute } from "@tanstack/react-router";
++import { AGENT_SETUP, hitRateLimit, userPrompt, validateAgentRequest } from "@/office/ai-prompts";
++
++const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
++const DEFAULT_MODEL = "openai/gpt-oss-120b";
++
++function json(body: unknown, status = 200, extra: Record<string, string> = {}) {
++  return new Response(JSON.stringify(body), {
++    status,
++    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...extra },
++  });
++}
++
++async function callGroq(url: string, key: string, body: Record<string, unknown>) {
++  return fetch(url, {
++    method: "POST",
++    headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
++    body: JSON.stringify(body),
++    signal: AbortSignal.timeout(45_000),
++  });
++}
++
++export const Route = createFileRoute("/api/agent")({
++  server: {
++    handlers: {
++      POST: async ({ request }) => {
++        const { env } = await import("@/lib/env.server");
++
++        // Same-site browsers only. Other callers are still bounded by the rate limit below.
++        const origin = request.headers.get("origin");
++        if (origin) {
++          let host = "";
++          try {
++            host = new URL(origin).host;
++          } catch {
++            /* malformed origin is rejected below */
++          }
++          if (host !== new URL(request.url).host) return json({ error: "forbidden", message: "Origin tidak diizinkan." }, 403);
++        }
++
++        const ip = (request.headers.get("x-forwarded-for") ?? "").split(",")[0]?.trim() || "anon";
++        if (hitRateLimit(ip)) {
++          return json({ error: "rate_limited", message: "Terlalu banyak permintaan. Tunggu sebentar.", retryAfter: 12 }, 429);
++        }
++
++        const key = env("GROQ_API_KEY");
++        if (!key) {
++          return json(
++            { error: "no_key", message: "GROQ_API_KEY belum dipasang di Vercel (Settings → Environment Variables)." },
++            503,
++          );
++        }
++
++        let raw: unknown;
++        try {
++          raw = await request.json();
++        } catch {
++          return json({ error: "bad_request", message: "JSON tidak valid." }, 400);
++        }
++        const parsed = validateAgentRequest(raw);
++        if (!parsed.ok) return json({ error: "bad_request", message: parsed.message }, 400);
++
++        const { agent } = parsed.value;
++        const setup = AGENT_SETUP[agent];
++        const model = env("GROQ_MODEL") ?? DEFAULT_MODEL;
++        const url = env("GROQ_API_URL") ?? GROQ_URL;
++        const payload: Record<string, unknown> = {
++          model,
++          temperature: 0.8,
++          max_completion_tokens: setup.maxTokens,
++          messages: [
++            { role: "system", content: setup.system },
++            { role: "user", content: userPrompt(parsed.value) },
++          ],
++          response_format: { type: "json_object" },
++        };
++        if (/gpt-oss/i.test(model)) payload.reasoning_effort = "low";
++
++        try {
++          let res = await callGroq(url, key, payload);
++          if (res.status === 400) {
++            // Some models reject JSON mode; the client parser copes with plain text.
++            delete payload.response_format;
++            res = await callGroq(url, key, payload);
++          }
++          if (res.status === 429) {
++            const wait = Number(res.headers.get("retry-after")) || 12;
++            return json({ error: "rate_limited", message: "Kuota gratis Groq sedang penuh.", retryAfter: wait }, 429);
++          }
++          if (res.status === 401 || res.status === 403) {
++            return json({ error: "bad_key", message: "GROQ_API_KEY ditolak Groq. Periksa kuncinya." }, 502);
++          }
++          if (!res.ok) {
++            return json({ error: "upstream", message: `Groq membalas HTTP ${res.status}.` }, 502);
++          }
++          const data = (await res.json()) as { choices?: { message?: { content?: string } }[] };
++          const text = data.choices?.[0]?.message?.content?.trim();
++          if (!text) return json({ error: "empty", message: "Groq membalas kosong." }, 502);
++          return json({ text, model });
++        } catch {
++          return json({ error: "upstream", message: "Tidak bisa menghubungi Groq (timeout)." }, 504);
++        }
++      },
++    },
++  },
++});
+diff --git a/src/styles.css b/src/styles.css
+index f18251c..4a59bea 100644
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -498,3 +498,226 @@
+ @media (prefers-reduced-motion: reduce) {
+   .bubble, .text-btn, .icon-btn { transition: none; }
+ }
++
++/* --- AI results panel --- */
++.results {
++  position: absolute;
++  inset: 0 0 0 0;
++  margin: 0 auto;
++  width: min(48rem, 100%);
++  max-height: 100%;
++  overflow: auto;
++  border-radius: 1.15rem;
++  padding: 0.9rem 1rem 1.1rem;
++  background: color-mix(in srgb, var(--color-paper) 96%, transparent);
++  color: var(--color-ink);
++  border: 1px solid var(--color-line);
++  box-shadow: 0 10px 30px rgba(28, 25, 22, 0.12);
++  backdrop-filter: blur(12px);
++}
++.results h2 {
++  margin: 0.15rem 0 0.35rem;
++  font-size: 1.35rem;
++  line-height: 1.2;
++}
++.res-actions {
++  display: flex;
++  gap: 0.4rem;
++  align-items: center;
++  flex-shrink: 0;
++}
++.res-tabs {
++  display: flex;
++  gap: 0.4rem;
++  overflow-x: auto;
++  padding: 0.25rem 0 0.6rem;
++}
++.res-tab {
++  display: grid;
++  min-width: 5.5rem;
++  min-height: 2.75rem;
++  padding: 0.3rem 0.8rem;
++  border-radius: 0.8rem;
++  border: 1px solid var(--color-line);
++  background: transparent;
++  color: var(--color-ink);
++  font-weight: 600;
++  text-align: left;
++}
++.res-tab small {
++  font-weight: 400;
++  color: var(--color-muted);
++  font-size: 0.72rem;
++}
++.res-tab.is-on {
++  border-color: var(--color-ink);
++  box-shadow: inset 0 0 0 1px var(--color-ink);
++}
++.res-body {
++  display: grid;
++  gap: 0.7rem;
++}
++.res-field {
++  display: grid;
++  gap: 0.15rem;
++}
++.res-field dt {
++  font-size: 0.72rem;
++  letter-spacing: 0.06em;
++  text-transform: uppercase;
++  color: var(--color-muted);
++}
++.res-field dd {
++  margin: 0;
++  line-height: 1.5;
++}
++.res-field ul {
++  margin: 0;
++  padding-left: 1.1rem;
++}
++.res-chips {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.35rem;
++}
++.res-chips span {
++  padding: 0.2rem 0.6rem;
++  border-radius: 999px;
++  background: var(--color-mist);
++  font-size: 0.82rem;
++}
++.story-title {
++  margin: 0;
++  font-family: var(--font-display);
++  font-size: 1.4rem;
++}
++.story {
++  margin: 0;
++  white-space: pre-wrap;
++  line-height: 1.65;
++}
++.res-raw {
++  white-space: pre-wrap;
++  line-height: 1.5;
++}
++.res-error {
++  margin: 0;
++  padding: 0.6rem 0.8rem;
++  border-radius: 0.7rem;
++  background: #f6dcd2;
++  color: #6b2210;
++}
++.muted {
++  color: var(--color-muted);
++  margin: 0;
++}
++.small {
++  font-size: 0.8rem;
++}
++.shot-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
++  gap: 0.8rem;
++}
++.shot h4 {
++  margin: 0.4rem 0 0.15rem;
++}
++.shot p {
++  margin: 0;
++  font-size: 0.9rem;
++  line-height: 1.45;
++}
++.shot-img {
++  margin: 0;
++  aspect-ratio: 1 / 1;
++  border-radius: 0.8rem;
++  overflow: hidden;
++  background: var(--color-mist);
++}
++.shot-img img {
++  width: 100%;
++  height: 100%;
++  object-fit: cover;
++  display: block;
++}
++.shot-wait {
++  display: grid;
++  place-items: center;
++  height: 100%;
++  padding: 1rem;
++  text-align: center;
++  color: var(--color-muted);
++  font-size: 0.85rem;
++}
++.scenes {
++  margin: 0;
++  padding-left: 1.2rem;
++  display: grid;
++  gap: 0.5rem;
++}
++.scenes p {
++  margin: 0.1rem 0 0;
++}
++.player {
++  display: grid;
++  gap: 0.5rem;
++}
++.player-stage {
++  position: relative;
++  aspect-ratio: 1 / 1;
++  max-height: 22rem;
++  margin: 0 auto;
++  width: 100%;
++  border-radius: 0.9rem;
++  overflow: hidden;
++  background: #151311;
++}
++.player-stage img {
++  width: 100%;
++  height: 100%;
++  object-fit: cover;
++}
++.kb {
++  animation: kenburns linear forwards;
++}
++@keyframes kenburns {
++  from { transform: scale(1); }
++  to { transform: scale(1.12) translate(-2%, -1%); }
++}
++.player-caption {
++  position: absolute;
++  left: 0.8rem;
++  right: 0.8rem;
++  bottom: 1rem;
++  margin: 0;
++  padding: 0.4rem 0.7rem;
++  border-radius: 0.6rem;
++  background: rgba(0, 0, 0, 0.62);
++  color: #fff;
++  text-align: center;
++  font-weight: 600;
++}
++.player-line {
++  margin: 0;
++  font-size: 0.92rem;
++}
++.player-bar {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.4rem;
++  align-items: center;
++}
++.player-voice {
++  display: inline-flex;
++  gap: 0.3rem;
++  align-items: center;
++  font-size: 0.85rem;
++}
++.player-prefetch {
++  display: none;
++}
++@media (max-width: 800px) {
++  .results {
++    width: 100%;
++  }
++}
+-- 
+2.43.0
+
